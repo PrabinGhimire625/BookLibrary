@@ -3,6 +3,10 @@ import Login from './components/pages/auth/Login';
 import Home from './components/pages/home/Home';
 import Product from './components/pages/product/Product';
 import Register from './components/pages/auth/register';
+import AboutUs from './components/pages/home/About';
+import ContactUs from './components/pages/home/Contact';
+
+
 
 function App() {
   return (
@@ -11,6 +15,8 @@ function App() {
       <Route path="/products" element={<Product />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/about" element={<AboutUs />} />
+      <Route path="/contact" element={<ContactUs />} />
     </Routes>
   );
 }
