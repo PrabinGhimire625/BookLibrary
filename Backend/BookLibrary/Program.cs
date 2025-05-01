@@ -1,26 +1,22 @@
 using BookLibrary.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Add services
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
 
 builder.Services.AddDbContext<DatabaseConnection>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
 ); 
 
 builder.Services.AddScoped<JwtTokenService>();
-
 
 // JWT Authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -55,12 +51,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Connect with the frontend
+// Authorization policy
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy =>
+    {
+        policy.RequireRole("Admin");
+    });
+
+    options.AddPolicy("RequireUserRole", policy =>
+    {
+        policy.RequireRole("User");
+    });
+});
+
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // React dev server
+        policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -68,7 +78,19 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Global error handler for 403 (forbidden)
+app.Use(async (context, next) =>
+{
+    await next();
+
+    if (context.Response.StatusCode == 403)
+    {
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync("{\"error\": \"Admin token is required\"}");
+    }
+});
+
+// Development-only Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -76,12 +98,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// Enable authentication and authorization middleware
-app.UseAuthentication();  // This must be called before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors(); // Enable CORS
+app.UseCors();
 app.MapControllers();
-
 app.Run();

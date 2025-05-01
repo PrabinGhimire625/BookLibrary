@@ -14,17 +14,16 @@ const APIAuthenticated = axios.create({
     baseURL: 'http://localhost:5120/',
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
     }
 });
 
-
-// Interceptor to
+// Interceptor to attach token
 APIAuthenticated.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');  // Fetch the latest token
+        const token = localStorage.getItem('token');
         if (token) {
-            config.headers['Authorization'] = ${token};
+            config.headers['Authorization'] = `Bearer ${token}`;  // Corrected formatting
         }
         return config;
     },
@@ -34,4 +33,3 @@ APIAuthenticated.interceptors.request.use(
 );
 
 export { API, APIAuthenticated };
-

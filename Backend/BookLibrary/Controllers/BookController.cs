@@ -11,67 +11,76 @@ namespace BookLibrary.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-         private readonly DatabaseConnection db;
+        private readonly DatabaseConnection db;
 
         public BookController(DatabaseConnection db)
         {
             this.db = db;
         }
 
-        // add the book in the database
-        [HttpPost("create")]
-         [Authorize] 
-        
+        // Add the book to the database
+        // Add the book to the database
+        [HttpPost("add")]
+        [Authorize]
         public async Task<IActionResult> PostBook([FromBody] Book book)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new { error = ModelState });
             }
 
             if (await db.Books.AnyAsync(b => b.Title == book.Title))
             {
-                return Conflict("Book with this title already exists.");
+                return Conflict(new { error = "Book with this title already exists." });
+            }
+
+            // Ensure AddedDate and PublicationDate are in UTC
+            book.AddedDate = book.AddedDate.Kind == DateTimeKind.Utc ? book.AddedDate : book.AddedDate.ToUniversalTime();
+            book.PublicationDate = book.PublicationDate.Kind == DateTimeKind.Utc ? book.PublicationDate : book.PublicationDate.ToUniversalTime();
+
+            // Ensure that Price is a positive value
+            if (book.Price <= 0)
+            {
+                return BadRequest(new { error = "Price must be a positive value." });
             }
 
             await db.Books.AddAsync(book);
             await db.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(new { data = book });
         }
 
-        //get all the books
-        [HttpGet("getAll")]
+        // Get all the books
+        [HttpGet("getAllBook")]
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await db.Books.ToListAsync();
-            return Ok(books);
+            return Ok(new { data = books });
         }
 
-        //single book by id
-        [HttpGet("details/{id}")]
+        // Get a single book by ID
+        [HttpGet("singleBook/{id}")]
         public async Task<IActionResult> GetBookById(Guid id)
         {
             var book = await db.Books.FindAsync(id);
             if (book == null)
             {
-                return NotFound("Book not found.");
+                return NotFound(new { error = "Book not found." });
             }
 
-            return Ok(book);
+            return Ok(new { data = book });
         }
 
-        //update book
+        // Update a book
         [HttpPatch("update/{id}")]
         public async Task<IActionResult> UpdateBook(Guid id, [FromBody] Book updatedBook)
         {
             var existingBook = await db.Books.FindAsync(id);
             if (existingBook == null)
             {
-                return NotFound("Book not found.");
+                return NotFound(new { error = "Book not found." });
             }
 
-            // Update fields
             existingBook.Title = updatedBook.Title;
             existingBook.Author = updatedBook.Author;
             existingBook.AddedDate = updatedBook.AddedDate;
@@ -79,34 +88,23 @@ namespace BookLibrary.Controllers
             existingBook.Price = updatedBook.Price;
 
             await db.SaveChangesAsync();
-            return Ok(existingBook);
+            return Ok(new { data = existingBook });
         }
 
-        //delete book
+        // Delete a book
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBook(Guid id)
         {
             var book = await db.Books.FindAsync(id);
             if (book == null)
             {
-                return NotFound("Book not found.");
+                return NotFound(new { error = "Book not found." });
             }
 
             db.Books.Remove(book);
             await db.SaveChangesAsync();
 
-            return Ok("Book deleted successfully.");
+            return Ok(new { data = "Book deleted successfully." });
         }
-
-
-
-
-
-
-
-
-
-
-
     }
 }
