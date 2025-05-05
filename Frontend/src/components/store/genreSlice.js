@@ -33,8 +33,9 @@ const genreSlice = createSlice({
             }
         },
         setDeleteGenre(state, action) {
-            state.genre = state.genre.filter(item => item.id !== action.payload.categoryId);
-        },
+            state.genre = state.genre.filter(item => item.genreId !== action.payload.genreId);  
+        }
+        
     },
 });
 
@@ -52,11 +53,11 @@ export const {
 export default genreSlice.reducer;
 
 // Add Book
-export function addGenre(categoryData) {
+export function addGenre(genreData) {
     return async function addGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
-            const response = await APIAuthenticated.post("/api/genres/create", categoryData);
+            const response = await APIAuthenticated.post("/api/genres/create", genreData);
             if (response.status === 200) {
                 dispatch(setStatus(STATUS.SUCCESS));
                 dispatch(listAllGenre());
@@ -91,11 +92,11 @@ export function listAllGenre() {
 }
 
 // Get Single Book
-export function listSingleGenre(categoryId) {
+export function listSingleGenre(genreId) {
     return async function listSingleGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
-            const response = await APIAuthenticated.get(`/api/genres/details/${categoryId}`);
+            const response = await APIAuthenticated.get(`/api/genres/details/${genreId}`);
             if (response.status === 200) {
                 dispatch(setSingleGenre(response.data.data));
                 dispatch(setStatus(STATUS.SUCCESS));
@@ -110,13 +111,13 @@ export function listSingleGenre(categoryId) {
 }
 
 // Delete Book
-export function deleteGenre(categoryId) {
+export function deleteGenre(genreId) {
     return async function deleteGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
-            const response = await APIAuthenticated.delete(`/api/genres/delete/${categoryId}`);
+            const response = await APIAuthenticated.delete(`/api/genres/delete/${genreId}`);
             if (response.status === 200) {
-                dispatch(setDeleteGenre({ categoryId }));
+                dispatch(setDeleteGenre({ genreId }));
                 dispatch(setStatus(STATUS.SUCCESS));
             } else {
                 dispatch(setStatus(STATUS.ERROR));
@@ -129,11 +130,11 @@ export function deleteGenre(categoryId) {
 }
 
 // Update Book
-export function updateGenre({ id, categoryData }) {
+export function updateGenre({ id, genreData }) {
     return async function updateGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
-            const response = await APIAuthenticated.patch(`/api/genres/update/${id}`, categoryData
+            const response = await APIAuthenticated.patch(`/api/genres/update/${id}`, genreData
             );
             if (response.status === 200) {
                 dispatch(setUpdategenre({ id, data: response.data.data }));

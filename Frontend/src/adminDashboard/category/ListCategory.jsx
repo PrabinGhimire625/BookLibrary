@@ -59,7 +59,7 @@ const ListCategory = () => {
               category.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white border border-gray-200 rounded-md shadow-sm hover:shadow-md transition flex items-center justify-between px-4 py-2 h-24"
+                  className="bg-white border border-gray-200 rounded-md shadow-sm hover:shadow-md transition flex items-center justify-between px-4 py-2 h-16"
                 >
                   {editMode === item.id ? (
                     <div className="flex flex-col md:flex-row md:items-center md:space-x-3 w-full">
