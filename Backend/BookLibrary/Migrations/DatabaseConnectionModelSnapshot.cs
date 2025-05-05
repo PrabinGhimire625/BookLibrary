@@ -38,19 +38,27 @@ namespace BookLibrary.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CoverImage")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Genre")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("ISBN")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<bool>("IsOnSale")
                         .HasColumnType("boolean");
@@ -60,6 +68,9 @@ namespace BookLibrary.Migrations
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()

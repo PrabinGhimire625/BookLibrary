@@ -8,6 +8,7 @@ const bookSlice = createSlice({
         book: [],
         singleBook: null,
         status: STATUS.LOADING,
+      
     },
     reducers: {
         setBookData(state, action) {
@@ -23,7 +24,7 @@ const bookSlice = createSlice({
             state.status = STATUS.LOADING;
           },
         setUpdateBook(state, action) {
-            const index = state.book.findIndex(item => item._id === action.payload.id);
+            const index = state.book.findIndex(item => item.id === action.payload.id);
             if (index !== -1) {
                 state.book[index] = {
                     ...state.book[index],
@@ -32,7 +33,7 @@ const bookSlice = createSlice({
             }
         },
         setDeleteBook(state, action) {
-            state.book = state.book.filter(item => item._id !== action.payload.bookId);
+            state.book = state.book.filter(item => item.id !== action.payload.bookId);
         },
     },
 });
@@ -54,7 +55,7 @@ export function addBook(bookData) {
         dispatch(setStatus(STATUS.LOADING));
         try {
             const response = await APIAuthenticated.post("/api/book/add", bookData);
-            if (response.status === 201) {
+            if (response.status === 200) {
                 dispatch(setStatus(STATUS.SUCCESS));
                 dispatch(listAllBook());
             } else {

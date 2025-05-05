@@ -19,7 +19,7 @@ namespace BookLibrary.Controllers
 
         // 👉 Create a new genre
         [HttpPost("create")]
-        [Authorize]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> AddGenre([FromBody] Genre genre)
         {
             if (!ModelState.IsValid)
@@ -55,6 +55,7 @@ namespace BookLibrary.Controllers
 
         // 👉 Update genre by ID
         [HttpPatch("update/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> UpdateGenre(Guid id, [FromBody] Genre updatedGenre)
         {
             var existingGenre = await db.Genres.FindAsync(id);
@@ -69,6 +70,7 @@ namespace BookLibrary.Controllers
 
         // 👉 Delete genre by ID
         [HttpDelete("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteGenre(Guid id)
         {
             var genre = await db.Genres.FindAsync(id);

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
 using BookLibrary.DTOs.Request;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BookLibrary.Controllers
 {
@@ -100,6 +101,46 @@ namespace BookLibrary.Controllers
             });
         }
 
+
+        //profile
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Invalid token. User ID not found.");
+            }
+
+            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return Unauthorized("Invalid user ID in token.");
+            }
+
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            return Ok(new
+            {
+                data = new
+                {
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    user.Address,
+                    user.Phone,
+                    user.Role
+                }
+            });
+        }
+
+
+
+
         // Get all users
         [HttpGet("getAllUsers")]
         [Authorize(Policy = "RequireAdminRole")]
@@ -114,7 +155,7 @@ namespace BookLibrary.Controllers
 
         // Update an existing user
         [HttpPatch("update/{id}")]
-
+        [Authorize]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserDTO updateUserDto)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -128,8 +169,8 @@ namespace BookLibrary.Controllers
             user.Name = updateUserDto.Name ?? user.Name;
             user.Address = updateUserDto.Address ?? user.Address;
             user.Phone = updateUserDto.Phone ?? user.Phone;
-            user.Email = updateUserDto.Email ?? user.Email;
-            user.Role = updateUserDto.Role ?? user.Role;
+            // user.Email = updateUserDto.Email ?? user.Email;
+            // user.Role = updateUserDto.Role ?? user.Role;
 
             await db.SaveChangesAsync();
 
@@ -140,8 +181,8 @@ namespace BookLibrary.Controllers
                 {
                     user.Id,
                     user.Name,
-                    user.Email,
-                    user.Role
+                    user.Address,
+                    user.Phone
                 }
             });
         }

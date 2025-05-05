@@ -15,6 +15,25 @@
           }
         }
       },
+      "CloudinaryDotNet/1.16.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Html.Abstractions": "2.2.0",
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
+          "Microsoft.Extensions.WebEncoders": "5.0.3",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/CloudinaryDotNet.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/CloudinaryDotNet.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -46,6 +65,55 @@
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
         ]
+      },
+      "Microsoft.AspNetCore.Html.Abstractions/2.2.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Text.Encodings.Web": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Html.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Html.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Http.Abstractions/2.2.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Features": "2.2.0",
+          "System.Text.Encodings.Web": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Http.Features/2.2.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "2.2.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+            "related": ".xml"
+          }
+        }
       },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
@@ -617,6 +685,23 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
+      "Microsoft.Extensions.WebEncoders/5.0.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0"
+        },
+        "compile": {
+          "lib/net5.0/Microsoft.Extensions.WebEncoders.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/Microsoft.Extensions.WebEncoders.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.IdentityModel.Abstractions/8.8.0": {
         "type": "package",
         "compile": {
@@ -737,6 +822,19 @@
         },
         "runtime": {
           "lib/netstandard2.0/Mono.TextTemplating.dll": {}
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Npgsql/8.0.6": {
@@ -1064,6 +1162,19 @@
           }
         }
       },
+      "System.Text.Encodings.Web/4.5.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.Threading.Channels/6.0.0": {
         "type": "package",
         "compile": {
@@ -1114,6 +1225,24 @@
         "readme.md"
       ]
     },
+    "CloudinaryDotNet/1.16.0": {
+      "sha512": "1nvqphN/k8pSkfZJGyMHkAQPelx7D+2zaVbb6xAfio0MVrtBOnI50VaT38RfYCzwFknqNUc0b/uPpCTzfpvpfw==",
+      "type": "package",
+      "path": "cloudinarydotnet/1.16.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CloudinaryIcon.png",
+        "cloudinarydotnet.1.16.0.nupkg.sha512",
+        "cloudinarydotnet.nuspec",
+        "lib/net452/CloudinaryDotNet.dll",
+        "lib/net452/CloudinaryDotNet.xml",
+        "lib/netstandard1.3/CloudinaryDotNet.dll",
+        "lib/netstandard1.3/CloudinaryDotNet.xml",
+        "lib/netstandard2.0/CloudinaryDotNet.dll",
+        "lib/netstandard2.0/CloudinaryDotNet.xml"
+      ]
+    },
     "Humanizer.Core/2.14.1": {
       "sha512": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "type": "package",
@@ -1145,6 +1274,45 @@
         "lib/net6.0/Microsoft.AspNetCore.Authentication.JwtBearer.xml",
         "microsoft.aspnetcore.authentication.jwtbearer.6.0.11.nupkg.sha512",
         "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Html.Abstractions/2.2.0": {
+      "sha512": "Y4rs5aMEXY8G7wJo5S3EEt6ltqyOTr/qOeZzfn+hw/fuQj5GppGckMY5psGLETo1U9hcT5MmAhaT5xtusM1b5g==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.html.abstractions/2.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Html.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Html.Abstractions.xml",
+        "microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
+        "microsoft.aspnetcore.html.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Http.Abstractions/2.2.0": {
+      "sha512": "Nxs7Z1q3f1STfLYKJSVXCs1iBl+Ya6E8o4Oy1bCxJ/rNI44E/0f6tbsrVqAWfB7jlnJfyaAtIalBVxPKUPQb4Q==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.http.abstractions/2.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.xml",
+        "microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
+        "microsoft.aspnetcore.http.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Http.Features/2.2.0": {
+      "sha512": "ziFz5zH8f33En4dX81LW84I6XrYXKf9jg6aM39cM+LffN9KJahViKZ61dGMSO2gd3e+qe5yBRwsesvyqlZaSMg==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.http.features/2.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.xml",
+        "microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
+        "microsoft.aspnetcore.http.features.nuspec"
       ]
     },
     "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
@@ -2329,6 +2497,25 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "Microsoft.Extensions.WebEncoders/5.0.3": {
+      "sha512": "NF5xPPZYJZNXIoHULq+hS6jIrkQt5X5qIMnH8Gz/uXsLVJCArrmP9ef5XuPkbCmTMepD+Ly8Qma+jwxqOPeHwQ==",
+      "type": "package",
+      "path": "microsoft.extensions.webencoders/5.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Extensions.WebEncoders.dll",
+        "lib/net461/Microsoft.Extensions.WebEncoders.xml",
+        "lib/net5.0/Microsoft.Extensions.WebEncoders.dll",
+        "lib/net5.0/Microsoft.Extensions.WebEncoders.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.WebEncoders.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.WebEncoders.xml",
+        "microsoft.extensions.webencoders.5.0.3.nupkg.sha512",
+        "microsoft.extensions.webencoders.nuspec"
+      ]
+    },
     "Microsoft.IdentityModel.Abstractions/8.8.0": {
       "sha512": "0lKw+f3vkmV9t3PLe6sY3xPrYrHYiMRFxuOse5CMkKPxhQYiabpfJsuk6wX2RrVQ86Dn+t/8poHpH0nbp6sFvA==",
       "type": "package",
@@ -2489,6 +2676,37 @@
         "lib/netstandard2.0/Mono.TextTemplating.dll",
         "mono.texttemplating.2.2.1.nupkg.sha512",
         "mono.texttemplating.nuspec"
+      ]
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "sha512": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "type": "package",
+      "path": "newtonsoft.json/12.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.12.0.3.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
       ]
     },
     "Npgsql/8.0.6": {
@@ -2943,6 +3161,25 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "System.Text.Encodings.Web/4.5.0": {
+      "sha512": "Xg4G4Indi4dqP1iuAiMSwpiWS54ZghzR644OtsRCm/m/lBMG8dUBhLVN7hLm8NNrNTR+iGbshCPTwrvxZPlm4g==",
+      "type": "package",
+      "path": "system.text.encodings.web/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netstandard1.0/System.Text.Encodings.Web.dll",
+        "lib/netstandard1.0/System.Text.Encodings.Web.xml",
+        "lib/netstandard2.0/System.Text.Encodings.Web.dll",
+        "lib/netstandard2.0/System.Text.Encodings.Web.xml",
+        "system.text.encodings.web.4.5.0.nupkg.sha512",
+        "system.text.encodings.web.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
     "System.Threading.Channels/6.0.0": {
       "sha512": "TY8/9+tI0mNaUMgntOxxaq2ndTkdXqLSxvPmas7XEqOlv9lQtB7wLjYGd756lOaO7Dvb5r/WXhluM+0Xe87v5Q==",
       "type": "package",
@@ -2974,6 +3211,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "BCrypt.Net-Next >= 4.0.3",
+      "CloudinaryDotNet >= 1.16.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 6.0.11",
       "Microsoft.EntityFrameworkCore >= 8.0.15",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.15",
@@ -2990,11 +3228,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\booklibrary\\BookLibrary.csproj",
+      "projectUniqueName": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
       "projectName": "BookLibrary",
-      "projectPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\booklibrary\\BookLibrary.csproj",
+      "projectPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
       "packagesPath": "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\booklibrary\\obj\\",
+      "outputPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3037,6 +3275,10 @@
           "BCrypt.Net-Next": {
             "target": "Package",
             "version": "[4.0.3, )"
+          },
+          "CloudinaryDotNet": {
+            "target": "Package",
+            "version": "[1.16.0, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",

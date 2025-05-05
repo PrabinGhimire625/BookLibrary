@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-
-
+import Logo from '../../assets/Logo.png'; 
+import { resetStatus } from "../store/bookSlice";
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img
-            src="https://flowbite.com/docs/images/logo.svg"
+            src={Logo}
             className="h-8"
             alt="Logo"
           />

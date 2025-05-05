@@ -1,12 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "FSONpeSeYek=",
+  "dgSpecHash": "3E+xscofjpg=",
   "success": true,
   "projectFilePath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\cloudinarydotnet\\1.16.0\\cloudinarydotnet.1.16.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.11\\microsoft.aspnetcore.authentication.jwtbearer.6.0.11.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.bcl.memory\\9.0.0\\microsoft.bcl.memory.9.0.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.3\\microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",
@@ -31,6 +35,7 @@
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.2\\microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.extensions.options\\8.0.2\\microsoft.extensions.options.8.0.2.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.extensions.webencoders\\5.0.3\\microsoft.extensions.webencoders.5.0.3.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.8.0\\microsoft.identitymodel.abstractions.8.8.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.8.0\\microsoft.identitymodel.jsonwebtokens.8.8.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.identitymodel.logging\\8.8.0\\microsoft.identitymodel.logging.8.8.0.nupkg.sha512",
@@ -39,6 +44,7 @@
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.8.0\\microsoft.identitymodel.tokens.8.8.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\npgsql\\8.0.6\\npgsql.8.0.6.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.11\\npgsql.entityframeworkcore.postgresql.8.0.11.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
@@ -58,6 +64,7 @@
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\system.reflection.metadata\\6.0.1\\system.reflection.metadata.6.0.1.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\system.text.encoding.codepages\\6.0.0\\system.text.encoding.codepages.6.0.0.nupkg.sha512",
+    "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\system.text.encodings.web\\4.5.0\\system.text.encodings.web.4.5.0.nupkg.sha512",
     "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\system.threading.channels\\6.0.0\\system.threading.channels.6.0.0.nupkg.sha512"
   ],
   "logs": []

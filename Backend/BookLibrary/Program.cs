@@ -18,6 +18,9 @@ builder.Services.AddDbContext<DatabaseConnection>(options =>
 
 builder.Services.AddScoped<JwtTokenService>();
 
+
+
+
 // JWT Authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

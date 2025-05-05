@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { login, resetStatus } from "../../store/authSlice";
+// Login.js
+import React, { useState } from "react";
+import { useDispatch } from 'react-redux';
+import { login } from "../../store/authSlice";
 import { useNavigate } from "react-router-dom";
-import { STATUS } from "../../globals/status/status";
 import { toast } from "react-toastify";
+import Logo from '../../../assets/Logo.png';
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { status } = useSelector((state) => state.auth);
-  const [errorMessage, setErrorMessage] = useState("");
-
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -24,119 +22,90 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(login(userData));
+    const user = await dispatch(login(userData));
+    if (user) {
+      toast.success("Login successful");
+      console.log("User role",user.role)
+      if (user.role === "Admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+    } else {
+      toast.error("Login failed. Please check your credentials.");
+    }
   };
 
-  useEffect(() => {
-    if (status === STATUS.SUCCESS) {
-      toast.success("Login successful");
-      dispatch(resetStatus());
-      navigate("/"); // Or any other route you want to redirect to
-    } else if (status === STATUS.ERROR) {
-      toast.error("Login failed. Please check your credentials.");
-    } else {
-      setErrorMessage("");
-    }
-  }, [status, navigate]);
-
   return (
-    <div className="bg-gray-50">
-      <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
-        <div className="max-w-md w-full">
-          <a href="javascript:void(0)">
+    <div className="bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen flex items-center justify-center px-4">
+      <div className="max-w-md w-full">
+        <div className="bg-white p-8 rounded-3xl shadow-xl">
+          <div className="mb-6 text-center">
             <img
-              src="https://readymadeui.com/readymadeui.svg"
+              src={Logo}
               alt="logo"
-              className="w-40 mb-8 mx-auto block"
+              className="w-20 mx-auto mb-4 hover:scale-105 transition-transform duration-300"
             />
-          </a>
-
-          <div className="p-8 rounded-2xl bg-white shadow">
-            <h2 className="text-slate-900 text-center text-3xl font-semibold">
-              Sign in
-            </h2>
-            <form onSubmit={handleSubmit} className="mt-12 space-y-6">
-              <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block">
-                  Email
-                </label>
-                <input
-                  name="email"
-                  value={userData.email}
-                  onChange={handleChange}
-                  type="email"
-                  required
-                  className="w-full text-slate-800 text-sm border border-slate-300 px-4 py-3 rounded-md outline-blue-600"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-800 text-sm font-medium mb-2 block">
-                  Password
-                </label>
-                <input
-                  name="password"
-                  value={userData.password}
-                  onChange={handleChange}
-                  type="password"
-                  required
-                  className="w-full text-slate-800 text-sm border border-slate-300 px-4 py-3 rounded-md outline-blue-600"
-                  placeholder="Enter your password"
-                />
-              </div>
-
-              {errorMessage && (
-                <div className="text-red-600 mt-4">{errorMessage}</div>
-              )}
-
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-3 block text-sm text-slate-800"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <div className="text-sm">
-                  <a
-                    href="javascript:void(0)"
-                    className="text-blue-600 hover:underline font-semibold"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-              </div>
-
-              <div className="!mt-12">
-                <button
-                  type="submit"
-                  className="w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-                >
-                  Sign in
-                </button>
-              </div>
-
-              <p className="text-slate-800 text-sm !mt-6 text-center">
-                Don't have an account?{" "}
-                <a
-                  href="/register"
-                  className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold"
-                >
-                  Register here
-                </a>
-              </p>
-            </form>
           </div>
+          <h2 className="text-slate-900 text-3xl font-bold text-center mb-8">Sign In</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+              <input
+                name="email"
+                value={userData.email}
+                onChange={handleChange}
+                type="email"
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+              <input
+                name="password"
+                value={userData.password}
+                onChange={handleChange}
+                type="password"
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                placeholder="Enter your password"
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-sm text-slate-700">
+              <label className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                />
+                <span className="ml-2">Remember me</span>
+              </label>
+              <a href="/forgot-password" className="text-blue-600 hover:underline font-semibold">
+                Forgot password?
+              </a>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Sign in
+            </button>
+
+            <p className="text-sm text-center text-slate-800 mt-6">
+              Don't have an account?
+              <a href="/register" className="text-blue-600 hover:underline ml-1 font-semibold">
+                Register here
+              </a>
+            </p>
+          </form>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from './../../globals/Navbar';
 import Card from './../../globals/Card';
+import ListAllBook from "../../../adminDashboard/Book/ListAllBook";
 
 const Home = () => {
   // const [books, setBooks] = useState([]);
@@ -24,8 +25,10 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      
-   
+      <ListAllBook/>
+         
+
+
     </>
   );
 };
