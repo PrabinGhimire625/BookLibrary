@@ -20,6 +20,7 @@ namespace BookLibrary.Controllers
 
         [HttpPost("addToCart")]
         [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> AddToCart([FromBody] Cart cart)
         {
             if (!ModelState.IsValid)
@@ -63,6 +64,7 @@ namespace BookLibrary.Controllers
         // Get cart items of the logged-in user
         [HttpGet("getCartItem")]
         [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> GetCartItems()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -83,6 +85,8 @@ namespace BookLibrary.Controllers
         // Remove an item from the cart
         [HttpDelete("delete/{bookId}")]
         [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
+
         public async Task<IActionResult> RemoveFromCart(Guid bookId)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -107,6 +111,7 @@ namespace BookLibrary.Controllers
         // Update cart item quantity
         [HttpPatch("update")]
         [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> UpdateCartItemQuantity([FromBody] CartUpdateRequest request)
         {
             // Validate quantity
