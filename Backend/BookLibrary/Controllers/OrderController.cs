@@ -130,6 +130,23 @@ namespace BookLibrary.Controllers
         }
 
         [Authorize]
+        [HttpGet("getAll")]
+        [Authorize(Policy = "RequireAdminRole")] // Ensure only admins can access
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await db.Orders.ToListAsync();
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound("No orders found.");
+            }
+
+            return Ok(orders);
+        }
+
+
+
+        [Authorize]
         [HttpGet("pending")]
         [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> GetPendingOrders()
@@ -171,7 +188,94 @@ namespace BookLibrary.Controllers
             return Ok(result);
         }
 
-        
+        [Authorize]
+        [HttpGet("delivered")]
+        [Authorize(Policy = "RequireUserRole")]
+        public async Task<IActionResult> GetDeliveredOrders()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                _logger.LogWarning("Unauthorized access attempt to fetch delivered orders.");
+                return Unauthorized();
+            }
+
+            var parsedUserId = Guid.Parse(userId);
+
+            var deliveredOrders = await db.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .Where(o => o.UserId == parsedUserId && o.OrderStatus == OrderStatus.Delivered)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            if (!deliveredOrders.Any())
+            {
+                return NotFound("No delivered orders found.");
+            }
+
+            var result = deliveredOrders.Select(o => new PendingOrderDto
+            {
+                OrderId = o.OrderId,
+                OrderDate = o.OrderDate,
+                Status = o.OrderStatus.ToString(),
+                Items = o.OrderItems.Select(oi => new OrderItemDto
+                {
+                    BookTitle = oi.Book.Title,
+                    Quantity = oi.Quantity,
+                    PricePerUnit = oi.UnitPrice
+                }).ToList()
+            }).ToList();
+
+            return Ok(result);
+        }
+
+
+        [Authorize]
+        [HttpPatch("cancel/{orderId}")]
+        [Authorize(Policy = "RequireUserRole")]
+        public async Task<IActionResult> CancelOrder(Guid orderId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                _logger.LogWarning("Unauthorized access attempt to cancel order.");
+                return Unauthorized();
+            }
+
+            var parsedUserId = Guid.Parse(userId);
+
+            // Find the order that belongs to the current user
+            var order = await db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == parsedUserId);
+
+            if (order == null)
+            {
+                _logger.LogWarning("Order with ID {OrderId} not found or does not belong to user.", orderId);
+                return NotFound("Order not found or you do not have permission to cancel it.");
+            }
+
+            // Only allow cancellation if order is still pending
+            if (order.OrderStatus != OrderStatus.Pending)
+            {
+                _logger.LogWarning("Attempt to cancel a non-pending order with ID {OrderId}.", orderId);
+                return BadRequest("Only pending orders can be cancelled.");
+            }
+
+            // Update the status to Cancelled
+            order.OrderStatus = OrderStatus.Cancelled;
+
+            // Save changes
+            await db.SaveChangesAsync();
+
+            _logger.LogInformation("Order with ID {OrderId} was successfully cancelled.", orderId);
+
+            return Ok(new
+            {
+                message = "Order has been cancelled successfully.",
+                orderId = order.OrderId,
+                status = order.OrderStatus.ToString()
+            });
+        }
 
     }
 }

@@ -4,6 +4,7 @@ import bookSlice from "./bookSlice"
 import categorySlice from "./categorySlice"
 import genreSlice from "./genreSlice"
 import cartSlice from "./cartSlice"
+import orderSlice from "./orderSlice"
 
 const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
         category:categorySlice,
         genre:genreSlice,
         cart:cartSlice,
+        order:orderSlice,
 
     }
 })

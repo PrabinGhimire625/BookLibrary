@@ -56,7 +56,7 @@ const Checkout = () => {
     try {
       await dispatch(submitOrder(orderData));
       toast.success("Order placed successfully!");
-      navigate('/orders'); // optional navigation after order
+      navigate('/myOrder'); // optional navigation after order
     } catch (err) {
       console.error('Failed to place order:', err);
       setError('Order placement failed. Please try again.');
