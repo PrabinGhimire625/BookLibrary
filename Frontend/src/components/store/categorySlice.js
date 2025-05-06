@@ -53,7 +53,7 @@ export const {
 
 export default categorySlice.reducer;
 
-// Add Book
+// Add category
 export function addCategory(categoryData) {
     return async function addCategoryThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
@@ -92,7 +92,7 @@ export function listAllCategory() {
     };
 }
 
-// Get Single Book
+// Get Single category
 export function listSingleCategory(categoryId) {
     return async function listSingleBookThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
@@ -111,7 +111,7 @@ export function listSingleCategory(categoryId) {
     };
 }
 
-// Delete Book
+// Delete category
 export function deleteCategory(categoryId) {
     return async function deleteCategoryThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
@@ -130,7 +130,7 @@ export function deleteCategory(categoryId) {
     };
 }
 
-// Update Book
+// Update category
 export function updateCategory({ id, categoryData }) {
     return async function updateCategoryThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));

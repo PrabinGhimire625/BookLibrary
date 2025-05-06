@@ -16,6 +16,9 @@ const ListCategory = () => {
     dispatch(listAllCategory());
   }, [dispatch]);
 
+
+  
+
   const handleDelete = (id) => {
     if (id) {
       dispatch(deleteCategory(id));

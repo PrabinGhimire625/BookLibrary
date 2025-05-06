@@ -17,7 +17,7 @@ namespace BookLibrary.Controllers
             this.db = db;
         }
 
-        // 👉 Create a new genre
+        // Create a new genre
         [HttpPost("create")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> AddGenre([FromBody] Genre genre)
@@ -34,7 +34,7 @@ namespace BookLibrary.Controllers
             return Ok(genre);
         }
 
-        // 👉 Get all genres
+        //  Get all genres
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllGenres()
         {
@@ -42,7 +42,7 @@ namespace BookLibrary.Controllers
             return Ok(genres);
         }
 
-        // 👉 Get genre by ID
+        //  Get genre by ID
         [HttpGet("details/{id}")]
         public async Task<IActionResult> GetGenreById(Guid id)
         {
@@ -53,7 +53,7 @@ namespace BookLibrary.Controllers
             return Ok(genre);
         }
 
-        // 👉 Update genre by ID
+        //  Update genre by ID
         [HttpPatch("update/{id}")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> UpdateGenre(Guid id, [FromBody] Genre updatedGenre)
@@ -68,7 +68,7 @@ namespace BookLibrary.Controllers
             return Ok(existingGenre);
         }
 
-        // 👉 Delete genre by ID
+        //  Delete genre by ID
         [HttpDelete("delete/{id}")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteGenre(Guid id)

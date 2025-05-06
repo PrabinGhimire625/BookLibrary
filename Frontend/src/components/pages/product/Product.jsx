@@ -4,7 +4,7 @@ import { ShoppingCart, Bookmark } from "lucide-react";
 import ComplexFilter from "../../globals/ComplexFilter";
 import { listAllBook } from "../../store/bookSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -72,38 +72,48 @@ export default function ProductPage() {
                 Loading books...
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {paginatedBooks.map((product, index) => (
-                  <div
-                    key={index}
-                    className="bg-white/80 border border-indigo-100 shadow-md rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                  >
-                    <img
-                      src={product.coverImage}
-                      alt={product.title}
-                      className="w-full h-56 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-md font-semibold text-indigo-900 truncate">
-                        {product.title}
-                      </h3>
-                      <p className="text-sm text-indigo-700 mb-1">
-                        by {product.author}
-                      </p>
-                      <p className="text-lg font-bold text-indigo-800 mb-3">
-                        Rs. {product.price}
-                      </p>
+                  <Link to={`/singleBook/${product.id}`} key={index}>
+                    <div className="bg-white/90 border border-indigo-100 shadow-lg rounded-xl overflow-hidden transform hover:scale-105 hover:shadow-2xl transition-transform duration-300 ease-in-out w-full">
+                      {/* Image Section */}
+                      <img
+                        src={product.coverImage}
+                        alt={product.title}
+                        className="w-full h-56 object-cover rounded-t-xl"
+                      />
 
-                      <div className="flex justify-between gap-2">
-                        <button className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-md flex items-center justify-center transition-colors duration-300">
-                          <ShoppingCart size={18} />
-                        </button>
-                        <button className="w-12 bg-white border border-indigo-300 hover:bg-indigo-100 text-indigo-600 rounded-md flex items-center justify-center transition-all duration-300">
-                          <Bookmark size={18} />
-                        </button>
+                      <div className="p-5">
+                        {/* Title */}
+                        <h3 className="text-lg font-semibold text-indigo-900 truncate mb-2 hover:text-indigo-700 transition-colors duration-200">
+                          {product.title}
+                        </h3>
+
+                        {/* Author */}
+                        <p className="text-sm text-indigo-700 mb-2">
+                          by <span className="font-semibold">{product.author}</span>
+                        </p>
+
+                        {/* Price */}
+                        <p className="text-lg font-bold text-indigo-800 mb-4">
+                          Rs. {product.price}
+                        </p>
+
+                        {/* Buttons */}
+                        <div className="flex justify-between items-center gap-4">
+                          {/* Add to Cart Button */}
+                          <button className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-lg shadow-md flex items-center justify-center transition-all duration-300">
+                            <ShoppingCart size={18} />
+                          </button>
+
+                          {/* Bookmark Button */}
+                          <button className="w-12 bg-white border border-indigo-300 hover:bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg">
+                            <Bookmark size={18} />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -122,11 +132,10 @@ export default function ProductPage() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-4 py-2 rounded ${
-                    currentPage === i + 1
-                      ? "bg-blue-600 text-white"
-                      : "bg-white border border-gray-300"
-                  }`}
+                  className={`px-4 py-2 rounded ${currentPage === i + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-white border border-gray-300"
+                    }`}
                 >
                   {i + 1}
                 </button>

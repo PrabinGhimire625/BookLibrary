@@ -16,5 +16,8 @@ public class DatabaseConnection : DbContext
     public  DbSet<User> Users { get; set;}
     public  DbSet<Category> Categories { get; set;}
     public  DbSet<Genre> Genres { get; set;}
+    public  DbSet<Cart> Carts { get; set;}
+    public  DbSet<Order> Orders { get; set;}
+    public  DbSet<OrderItem> OrderItems { get; set;}
 
 }

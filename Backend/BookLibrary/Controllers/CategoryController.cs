@@ -17,7 +17,7 @@ namespace BookLibrary.Controllers
             this.db = db;
         }
 
-        // 👉 Create a new category
+        // Create a new category
         [HttpPost("create")]
         [Authorize]
         public async Task<IActionResult> AddCategory([FromBody] Category category)
@@ -34,7 +34,7 @@ namespace BookLibrary.Controllers
             return Ok(category);
         }
 
-        // 👉 Get all categories
+        // Get all categories
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllCategories()
         {
@@ -42,7 +42,7 @@ namespace BookLibrary.Controllers
             return Ok(categories);
         }
 
-        // 👉 Get category by ID
+        // Get category by ID
         [HttpGet("details/{id}")]
         public async Task<IActionResult> GetCategoryById(Guid id)
         {
@@ -53,7 +53,7 @@ namespace BookLibrary.Controllers
             return Ok(category);
         }
 
-        // 👉 Update category by ID
+        // Update category by ID
         [HttpPatch("update/{id}")]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] Category updatedCategory)
         {
@@ -67,7 +67,7 @@ namespace BookLibrary.Controllers
             return Ok(existingCategory);
         }
 
-        // 👉 Delete category by ID
+        // Delete category by ID
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {

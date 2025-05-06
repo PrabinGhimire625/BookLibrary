@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import Logo from '../../assets/Logo.png'; 
-import { resetStatus } from "../store/bookSlice";
+import Logo from '../../assets/Logo.png';
+import { FaShoppingCart } from "react-icons/fa";
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, profile } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const localStorageToken = localStorage.getItem('token');
     setIsLoggedIn(!!localStorageToken || !!token);
-   
+
   }, [dispatch, token]);
 
   //logout
@@ -38,6 +39,16 @@ const Navbar = () => {
         </a>
 
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse space-between">
+          {/* Cart Icon with count */}
+          <Link to="/cart" className="relative">
+            <FaShoppingCart className="text-white text-3xl" />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-white text-orange-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                {cart.length}
+              </span>
+            )}
+          </Link>
+
           {!isLoggedIn ? (
             <>
               <Link to="/register">

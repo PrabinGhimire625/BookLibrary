@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj": {}
+    "C:\\Users\\PRABIN GHIMIRE\\Desktop\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj": {
+    "C:\\Users\\PRABIN GHIMIRE\\Desktop\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
+        "projectUniqueName": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
         "projectName": "BookLibrary",
-        "projectPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
+        "projectPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\Book Library\\Backend\\BookLibrary\\BookLibrary.csproj",
         "packagesPath": "C:\\Users\\PRABIN GHIMIRE\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\AD\\Semester2\\Book Library\\Backend\\BookLibrary\\obj\\",
+        "outputPath": "C:\\Users\\PRABIN GHIMIRE\\Desktop\\Book Library\\Backend\\BookLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

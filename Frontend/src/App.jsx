@@ -20,6 +20,10 @@ import ListCategory from './adminDashboard/category/ListCategory';
 import EditBook from './adminDashboard/Book/EditBook';
 import AddGenre from './adminDashboard/genre/AddGenre';
 import ListGenre from './adminDashboard/genre/ListGenre';
+import SingleProduct from './components/pages/product/SingleBook';
+import SingleBook from './components/pages/product/SingleBook';
+import Cart from './components/pages/cart/Cart';
+import Checkout from './components/pages/checkout/Checkout';
 
 
 function App() {
@@ -33,7 +37,10 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+
           <Route path="/products" element={<Product />} />
+          <Route path="/singleBook/:id" element={<SingleBook />} />
+
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
 
@@ -51,6 +58,8 @@ function App() {
           <Route path="/addGenre" element={<AddGenre />} />
           <Route path="/listGenre" element={<ListGenre />} />
 
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
 
         </Routes>
       </div>

@@ -1,11 +1,34 @@
-// using System;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-// namespace BookLibrary.Model;
+namespace BookLibrary.Model
+{
+    public class Cart
+    {
+        [Key]
+        public Guid CartId { get; set; }
 
-// public class Cart
-// {
-//     public Guid Id { get; set; } // Unique identifier for the cart
-//     public Guid UserId { get; set; } // The user's cart
-//     public int Quantity { get; set; } // The user's cart
-//     //public ICollection<CartItem> CartItems { get; set; } // Items in the cart
-// }
+        [Required]
+        public int TotalItems { get; set; }
+
+        // [Required]
+        // public decimal CartTotal { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Foreign Keys
+        [Required]
+        public Guid UserId { get; set; }
+
+        [Required]
+        public Guid BookId { get; set; }
+
+        // Navigation Properties
+        [ForeignKey(nameof(UserId))]
+        public User? User { get; set; }
+
+        [ForeignKey(nameof(BookId))]
+        public Book? Book { get; set; }
+    }
+}

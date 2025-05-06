@@ -52,7 +52,7 @@ export const {
 
 export default genreSlice.reducer;
 
-// Add Book
+// Add genre
 export function addGenre(genreData) {
     return async function addGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
@@ -91,7 +91,7 @@ export function listAllGenre() {
     };
 }
 
-// Get Single Book
+// Get Single genre
 export function listSingleGenre(genreId) {
     return async function listSingleGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
@@ -110,7 +110,7 @@ export function listSingleGenre(genreId) {
     };
 }
 
-// Delete Book
+// Delete genre
 export function deleteGenre(genreId) {
     return async function deleteGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
@@ -129,7 +129,7 @@ export function deleteGenre(genreId) {
     };
 }
 
-// Update Book
+// Update genre
 export function updateGenre({ id, genreData }) {
     return async function updateGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
