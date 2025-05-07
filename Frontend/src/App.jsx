@@ -27,6 +27,7 @@ import Checkout from './components/pages/checkout/Checkout';
 import MyOrders from './components/pages/order/MyOrder';
 import MyOrder from './components/pages/order/MyOrder';
 import OrderDetails from './components/pages/order/OrderDetails';
+import WhiteList from './components/pages/whiteList/WhiteList';
 
 
 function App() {
@@ -64,9 +65,10 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
 
-
           <Route path="/myOrder" element={<MyOrder />} />
           <Route path="/orderDetails/:id" element={<OrderDetails />} />
+
+          <Route path="/whiteList" element={<WhiteList />} />
 
         </Routes>
       </div>

@@ -68,32 +68,35 @@ namespace BookLibrary.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetWhiteListForUser()
+    [HttpGet]
+public async Task<IActionResult> GetWhiteListForUser()
+{
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+    if (userIdClaim == null)
+    {
+        return Unauthorized("User ID not found in token.");
+    }
+
+    Guid userId = Guid.Parse(userIdClaim.Value);
+
+    var whitelist = await db.WhiteLists
+        .Include(w => w.Book) // assuming there's a navigation property for Book
+        .Where(w => w.UserId == userId)
+        .Select(w => new
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            w.BookId,
+            CoverImage = w.Book.CoverImage,    
+            BookTitle = w.Book.Title,          
+            BookAuthor = w.Book.Author,   
+            Genre = w.Book.Genre,               
+            Category = w.Book.Category,               
+            w.WhiteListId
+        })
+        .ToListAsync();
 
-            if (userIdClaim == null)
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-
-            Guid userId = Guid.Parse(userIdClaim.Value);
-
-            var whitelist = await db.WhiteLists
-                .Include(w => w.Book) // assuming there's a navigation property for Book
-                .Where(w => w.UserId == userId)
-                .Select(w => new
-                {
-                    w.BookId,
-                    BookTitle = w.Book.Title,       // customize fields as needed
-                    BookAuthor = w.Book.Author,     // optional
-                    w.WhiteListId
-                })
-                .ToListAsync();
-
-            return Ok(whitelist);
-        }
+    return Ok(whitelist);
+}
 
 
     }
