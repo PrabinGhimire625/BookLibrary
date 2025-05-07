@@ -7,6 +7,7 @@ const orderSlice = createSlice({
   initialState: {
     items: [],
     myOrders: [],
+    singleOrder:[],
     orderDetails: [],
     pendingOrders: [],
     deliveredOrders: [],
@@ -19,6 +20,9 @@ const orderSlice = createSlice({
     },
     setMyOrders(state, action) {
       state.myOrders = action.payload;
+    },
+    setSingleOrder(state, action) {
+      state.singleOrder = action.payload;
     },
     setMyOrderDetails(state, action) {
       state.orderDetails = action.payload;
@@ -66,6 +70,7 @@ export const {
   resetStatus,
   setDeleteOrder,
   resetOrderState,
+  setSingleOrder
 } = orderSlice.actions;
 
 export default orderSlice.reducer;
@@ -73,7 +78,7 @@ export default orderSlice.reducer;
 
 // Submit a new order
 export function submitOrder(orderData) {
-    return async function (dispatch) {
+    return async function  submitOrderThunk (dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
             const response = await APIAuthenticated.post("/api/order/place", orderData);
@@ -95,7 +100,7 @@ export function submitOrder(orderData) {
 }
 // Fetch all orders (Admin)
 export function fetchAllOrders() {
-    return async function (dispatch) {
+    return async function fetchAllOrdersThunk (dispatch) {
       dispatch(setStatus(STATUS.LOADING));
       try {
         const response = await APIAuthenticated.get("/api/order/getAll");
@@ -113,7 +118,7 @@ export function fetchAllOrders() {
   }
 // Fetch pending orders for logged-in user
 export function fetchPendingOrders() {
-    return async function (dispatch) {
+    return async function  fetchPendingOrdersThunk (dispatch) {
       dispatch(setStatus(STATUS.LOADING));
       try {
         const response = await APIAuthenticated.get("/api/order/pending");
@@ -133,7 +138,7 @@ export function fetchPendingOrders() {
 
   // Fetch delivered orders for logged-in user
 export function fetchDeliveredOrders() {
-    return async function (dispatch) {
+    return async function fetchDeliveredOrdersThunk (dispatch) {
       dispatch(setStatus(STATUS.LOADING));
       try {
         const response = await APIAuthenticated.get("/api/order/delivered");
@@ -153,13 +158,58 @@ export function fetchDeliveredOrders() {
   
   // Cancel an order
 export function cancelOrder(orderId) {
-    return async function (dispatch) {
+    return async function cancelOrderThunk (dispatch) {
       dispatch(setStatus(STATUS.LOADING));
       try {
         const response = await APIAuthenticated.patch(`/api/order/cancel/${orderId}`);
         if (response.status === 200) {
           dispatch(setStatus(STATUS.SUCCESS));
-          dispatch(setDeleteOrder({ orderId }));
+        //   dispatch(setDeleteOrder({ orderId }));
+          // Optionally: toast.success("Order cancelled successfully!");
+        } else {
+          dispatch(setStatus(STATUS.ERROR));
+          // Optionally: toast.error("Failed to cancel order.");
+        }
+      } catch (err) {
+        const message = err.response?.data?.message || "Something went wrong!";
+        console.error("Error canceling order:", message);
+        dispatch(setStatus(STATUS.ERROR));
+        // Optionally: toast.error(message);
+      }
+    };
+  }
+  
+  // Cancel an order
+export function fetchCancelledOrder() {
+    return async function fetchCancelledOrderThunk(dispatch) {
+      dispatch(setStatus(STATUS.LOADING));
+      try {
+        const response = await APIAuthenticated.get(`/api/order/cancelled`);
+        if (response.status === 200) {
+          dispatch(setStatus(STATUS.SUCCESS));
+
+        } else {
+          dispatch(setStatus(STATUS.ERROR));
+        }
+      } catch (err) {
+        const message = err.response?.data?.message || "Something went wrong!";
+        console.error("Error canceling order:", message);
+        dispatch(setStatus(STATUS.ERROR));
+        // Optionally: toast.error(message);
+      }
+    };
+  }
+  
+
+  // Cancel an order
+  export function fetchSingleOrder(orderId) {
+    return async function fetchSingleOrderThunk(dispatch) {
+      dispatch(setStatus(STATUS.LOADING));
+      try {
+        const response = await APIAuthenticated.get(`/api/order/${orderId}`);
+        if (response.status === 200) {
+          dispatch(setStatus(STATUS.SUCCESS));
+          dispatch(setSingleOrder(response.data));
           // Optionally: toast.success("Order cancelled successfully!");
         } else {
           dispatch(setStatus(STATUS.ERROR));

@@ -277,5 +277,93 @@ namespace BookLibrary.Controllers
             });
         }
 
+        [Authorize]
+        [HttpGet("cancelled")]
+        [Authorize(Policy = "RequireUserRole")]
+        public async Task<IActionResult> GetCancelledOrders()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                _logger.LogWarning("Unauthorized access attempt to fetch cancelled orders.");
+                return Unauthorized();
+            }
+
+            var parsedUserId = Guid.Parse(userId);
+
+            // Fetch cancelled orders for the current user
+            var cancelledOrders = await db.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .Where(o => o.UserId == parsedUserId && o.OrderStatus == OrderStatus.Cancelled)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            if (!cancelledOrders.Any())
+            {
+                return NotFound("No cancelled orders found.");
+            }
+
+            var result = cancelledOrders.Select(o => new PendingOrderDto
+            {
+                OrderId = o.OrderId,
+                OrderDate = o.OrderDate,
+                Status = o.OrderStatus.ToString(),
+                Items = o.OrderItems.Select(oi => new OrderItemDto
+                {
+                    BookTitle = oi.Book.Title,
+                    Quantity = oi.Quantity,
+                    PricePerUnit = oi.UnitPrice
+                }).ToList()
+            }).ToList();
+
+            return Ok(result);
+        }
+
+
+
+
+
+        [Authorize]
+        [HttpGet("{orderId}")]
+        [Authorize(Policy = "RequireUserRole")]
+        public async Task<IActionResult> GetSingleOrder(Guid orderId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                _logger.LogWarning("Unauthorized access attempt to fetch order.");
+                return Unauthorized();
+            }
+
+            var parsedUserId = Guid.Parse(userId);
+
+            var order = await db.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == parsedUserId);
+
+            if (order == null)
+            {
+                return NotFound("Order not found or you do not have permission to view it.");
+            }
+
+            var result = new PendingOrderDto
+            {
+                OrderId = order.OrderId,
+                OrderDate = order.OrderDate,
+                Status = order.OrderStatus.ToString(),
+                Items = order.OrderItems.Select(oi => new OrderItemDto
+                {
+                    BookTitle = oi.Book.Title,
+                    Quantity = oi.Quantity,
+                    PricePerUnit = oi.UnitPrice
+                }).ToList()
+            };
+
+            return Ok(result);
+        }
+
+
     }
 }
