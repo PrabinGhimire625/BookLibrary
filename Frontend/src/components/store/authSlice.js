@@ -62,19 +62,25 @@ export function register(data) {
 }
 
 
-//login
+// login.js
 export function login(data) {
   return async function loginThunk(dispatch) {
     dispatch(setStatus(STATUS.LOADING));
     try {
       const response = await API.post("/api/user/login", data);
+
       if (response.status === 200) {
         const { token, data: userData } = response.data;
+
         dispatch(setProfile(userData));
         dispatch(setToken(token));
+
         localStorage.setItem('token', token);
+        localStorage.setItem('role', userData.role); 
+
+
         dispatch(setStatus(STATUS.SUCCESS));
-        return userData; // Return user data for further handling
+        return userData;
       } else {
         dispatch(setStatus(STATUS.ERROR));
         return null;
@@ -89,7 +95,6 @@ export function login(data) {
 
 
 //profile
-//user profile
 export function userProfile() {
   return async function userProfileThunk(dispatch) {
     dispatch(setStatus(STATUS.LOADING));

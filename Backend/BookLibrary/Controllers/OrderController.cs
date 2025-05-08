@@ -180,6 +180,9 @@ namespace BookLibrary.Controllers
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
                     BookTitle = oi.Book.Title,
+                    CoverImage = oi.Book.CoverImage,
+                    Genre = oi.Book.Genre,
+                    Category = oi.Book.Category,
                     Quantity = oi.Quantity,
                     PricePerUnit = oi.UnitPrice
                 }).ToList()
@@ -188,47 +191,51 @@ namespace BookLibrary.Controllers
             return Ok(result);
         }
 
-        [Authorize]
-        [HttpGet("delivered")]
-        [Authorize(Policy = "RequireUserRole")]
-        public async Task<IActionResult> GetDeliveredOrders()
+     [Authorize]
+[HttpGet("delivered")]
+[Authorize(Policy = "RequireUserRole")]
+public async Task<IActionResult> GetDeliveredOrders()
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (userId == null)
+    {
+        _logger.LogWarning("Unauthorized access attempt to fetch delivered orders.");
+        return Unauthorized();
+    }
+
+    var parsedUserId = Guid.Parse(userId);
+
+    // Fetch the delivered orders along with the necessary Book details
+    var deliveredOrders = await db.Orders
+        .Include(o => o.OrderItems)
+        .ThenInclude(oi => oi.Book) // Include related Book data
+        .Where(o => o.UserId == parsedUserId && o.OrderStatus == OrderStatus.Delivered)
+        .OrderByDescending(o => o.OrderDate)
+        .ToListAsync();
+
+    if (!deliveredOrders.Any())
+    {
+        return NotFound("No delivered orders found.");
+    }
+
+    var result = deliveredOrders.Select(o => new PendingOrderDto
+    {
+        OrderId = o.OrderId,
+        OrderDate = o.OrderDate,
+        Status = o.OrderStatus.ToString(),
+        Items = o.OrderItems.Select(oi => new OrderItemDto
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                _logger.LogWarning("Unauthorized access attempt to fetch delivered orders.");
-                return Unauthorized();
-            }
+            BookTitle = oi.Book.Title,
+            Quantity = oi.Quantity,
+            PricePerUnit = oi.UnitPrice,
+            CoverImage = oi.Book.CoverImage,     // Add CoverImage
+            Genre = oi.Book.Genre,               // Add Genre
+            Category = oi.Book.Category          // Add Category
+        }).ToList()
+    }).ToList();
 
-            var parsedUserId = Guid.Parse(userId);
-
-            var deliveredOrders = await db.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Book)
-                .Where(o => o.UserId == parsedUserId && o.OrderStatus == OrderStatus.Delivered)
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
-
-            if (!deliveredOrders.Any())
-            {
-                return NotFound("No delivered orders found.");
-            }
-
-            var result = deliveredOrders.Select(o => new PendingOrderDto
-            {
-                OrderId = o.OrderId,
-                OrderDate = o.OrderDate,
-                Status = o.OrderStatus.ToString(),
-                Items = o.OrderItems.Select(oi => new OrderItemDto
-                {
-                    BookTitle = oi.Book.Title,
-                    Quantity = oi.Quantity,
-                    PricePerUnit = oi.UnitPrice
-                }).ToList()
-            }).ToList();
-
-            return Ok(result);
-        }
+    return Ok(result);
+}
 
 
         [Authorize]
@@ -312,6 +319,9 @@ namespace BookLibrary.Controllers
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
                     BookTitle = oi.Book.Title,
+                    CoverImage = oi.Book.CoverImage,
+                    Genre = oi.Book.Genre,
+                    Category = oi.Book.Category,
                     Quantity = oi.Quantity,
                     PricePerUnit = oi.UnitPrice
                 }).ToList()
@@ -319,9 +329,6 @@ namespace BookLibrary.Controllers
 
             return Ok(result);
         }
-
-
-
 
 
         [Authorize]
@@ -356,6 +363,10 @@ namespace BookLibrary.Controllers
                 Items = order.OrderItems.Select(oi => new OrderItemDto
                 {
                     BookTitle = oi.Book.Title,
+                    BookId = oi.Book.Id, 
+                    CoverImage = oi.Book.CoverImage,
+                    Genre = oi.Book.Genre,
+                    Category = oi.Book.Category,
                     Quantity = oi.Quantity,
                     PricePerUnit = oi.UnitPrice
                 }).ToList()

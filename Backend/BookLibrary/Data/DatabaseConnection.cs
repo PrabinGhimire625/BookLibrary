@@ -20,5 +20,6 @@ public class DatabaseConnection : DbContext
     public  DbSet<Order> Orders { get; set;}
     public  DbSet<OrderItem> OrderItems { get; set;}
     public  DbSet<WhiteList> WhiteLists { get; set;}
+    public  DbSet<Review> Reviews { get; set;}
 
 }

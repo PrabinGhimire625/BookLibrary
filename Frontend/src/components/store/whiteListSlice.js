@@ -42,7 +42,6 @@ export function addToWhiteList(bookId) {
             const response = await APIAuthenticated.post("/api/whiteList", { bookId }); // BookId in request body
             if (response.status === 200) {
                 dispatch(setStatus(STATUS.SUCCESS));
-                dispatch(listAllWhiteList());  // Re-fetch the updated whitelist
             } else {
                 dispatch(setStatus(STATUS.ERROR));
             }
@@ -57,9 +56,9 @@ export function listAllWhiteList() {
     return async function listAllWhiteListThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
-            const response = await APIAuthenticated.get("/api/whiteList");  // Get user's whitelist
+            const response = await APIAuthenticated.get("/api/whiteList");  
             if (response.status === 200) {
-                dispatch(setWhiteListData(response.data));  // Update Redux state with fetched data
+                dispatch(setWhiteListData(response.data));  
                 dispatch(setStatus(STATUS.SUCCESS));
             } else {
                 dispatch(setStatus(STATUS.ERROR));

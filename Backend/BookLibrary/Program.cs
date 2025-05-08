@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using BookLibrary.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +62,7 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("RequireUserRole", policy =>
     {
-        policy.RequireRole("User");
+        policy.RequireRole("Member");
     });
 });
 
@@ -77,18 +78,19 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Global error handler for 403 (forbidden)
-app.Use(async (context, next) =>
-{
-    await next();
+// app.Use(async (context, next) =>
+// {
+//     await next();
 
-    if (context.Response.StatusCode == 403)
-    {
-        context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync("{\"error\": \"Admin token is required\"}");
-    }
-});
+//     if (context.Response.StatusCode == 403)
+//     {
+//         context.Response.ContentType = "application/json";
+//         await context.Response.WriteAsync("{\"error\": \"Admin token is required\"}");
+//     }
+// });
 
 // Development-only Swagger
 if (app.Environment.IsDevelopment())

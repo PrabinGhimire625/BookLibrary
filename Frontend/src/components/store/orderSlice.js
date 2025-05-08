@@ -11,6 +11,7 @@ const orderSlice = createSlice({
     orderDetails: [],
     pendingOrders: [],
     deliveredOrders: [],
+    cancelOrder:[],
     allOrders: [],
     status: STATUS.LOADING,
   },
@@ -32,6 +33,9 @@ const orderSlice = createSlice({
     },
     setDeliveredOrders(state, action) {
       state.deliveredOrders = action.payload;
+    },
+    setCancelOrder(state, action) {
+      state.cancelOrder = action.payload;
     },
     setAllOrders(state, action) {
       state.allOrders = action.payload;
@@ -70,7 +74,7 @@ export const {
   resetStatus,
   setDeleteOrder,
   resetOrderState,
-  setSingleOrder
+  setSingleOrder, setCancelOrder
 } = orderSlice.actions;
 
 export default orderSlice.reducer;
@@ -187,6 +191,7 @@ export function fetchCancelledOrder() {
         const response = await APIAuthenticated.get(`/api/order/cancelled`);
         if (response.status === 200) {
           dispatch(setStatus(STATUS.SUCCESS));
+          dispatch(setCancelOrder(response.data));
 
         } else {
           dispatch(setStatus(STATUS.ERROR));

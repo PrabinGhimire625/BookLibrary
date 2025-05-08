@@ -5,6 +5,7 @@ import { listAllBook } from "../../store/bookSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { listAllCategory } from "../../store/categorySlice";
 import { listAllGenre } from "../../store/genreSlice";
+import { Link } from "react-router-dom";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -47,6 +48,8 @@ export default function ProductPage() {
     dispatch(listAllGenre());
   }, [dispatch]);
 
+
+  
   // Sorting function
   const sortBooks = (books) => {
     switch (sortBy) {
@@ -212,26 +215,38 @@ export default function ProductPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedBooks?.map((item) => (
-                <div
-                  key={item._id}
-                  className="bg-white border rounded-lg p-4 shadow-md hover:shadow-xl transition-shadow"
-                >
-                  <img
-                    src={item.coverImage}
-                    alt={item.title}
-                    className="w-full h-48 object-cover rounded mb-4"
-                  />
-                  <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{item.author}</p>
-                  <p className="text-md font-bold text-indigo-700 mb-2">Rs. {item.price}</p>
-                  <div className="flex justify-between items-center">
-                    <button className="bg-indigo-600 text-white px-3 py-1 rounded flex items-center gap-1 hover:bg-indigo-700">
-                      <ShoppingCart size={16} />
-                      Add to Cart
-                    </button>
-                    <Bookmark size={20} className="text-gray-500 hover:text-indigo-600 cursor-pointer" />
+                <Link to={`/singleBook/${item.id}`} key={item._id}>
+                  <div className="bg-white border rounded-lg p-4 shadow-md hover:shadow-xl transition-shadow">
+                    <img
+                      src={item.coverImage}
+                      alt={item.title}
+                      className="w-full h-48 object-cover rounded mb-4"
+                    />
+                    <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{item.author}</p>
+                    <p className="text-md font-bold text-indigo-700 mb-2">Rs. {item.price}</p>
+                    <div className="flex justify-between items-center">
+                      <button
+                        className="bg-indigo-600 text-white px-3 py-1 rounded flex items-center gap-1 hover:bg-indigo-700"
+                        onClick={(e) => {
+                          e.preventDefault(); // prevents navigation on click
+                          // add to cart logic here
+                        }}
+                      >
+                        <ShoppingCart size={16} />
+                        Add to Cart
+                      </button>
+                      <Bookmark
+                        size={20}
+                        className="text-gray-500 hover:text-indigo-600 cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault(); // prevents navigation on click
+                          // bookmark logic here
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
