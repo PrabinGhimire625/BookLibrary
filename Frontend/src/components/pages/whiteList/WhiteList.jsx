@@ -1,66 +1,50 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';  // Import hooks from Redux
+import { useDispatch, useSelector } from 'react-redux';
 import { STATUS } from '../../globals/status/status';
 import { listAllWhiteList } from '../../store/whiteListSlice';
+import { Link } from 'react-router-dom';
 
 const WhiteList = () => {
   const dispatch = useDispatch();
-
-  // Access the whitelist data and status from Redux state
-  const { whiteList, status } = useSelector(state => state.whiteList);
+  const { whiteList, status } = useSelector((state) => state.whiteList);
 
   useEffect(() => {
-    // Dispatch action to fetch whitelist data when the component mounts
     dispatch(listAllWhiteList());
   }, [dispatch]);
 
-  console.log(whiteList);
-
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>My WhiteList</h2>
-      {status === STATUS.LOADING && <p>Loading...</p>}
-      {status === STATUS.ERROR && <p>Something went wrong. Please try again.</p>}
+    <div className="min-h-screen px-4 md:px-12 py-10 bg-gray-50">
+      <h2 className="text-3xl font-bold text-indigo-700 mb-6 text-center">My Whitelist</h2>
 
-      {whiteList.length === 0 ? (
-        <p>No books in the whitelist.</p>
+      {status === STATUS.LOADING && (
+        <p className="text-center text-gray-600">Loading books...</p>
+      )}
+
+      {status === STATUS.ERROR && (
+        <p className="text-center text-red-600">Something went wrong. Please try again.</p>
+      )}
+
+      {whiteList.length === 0 && status !== STATUS.LOADING ? (
+        <p className="text-center text-gray-500 mt-10">No books in your whitelist yet.</p>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '20px'
-        }}>
-          {whiteList.map(item => (
-            <div
-              key={item.whiteListId}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '20px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                backgroundColor: '#fff',
-                transition: 'transform 0.2s',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {whiteList.map((item) => (
+            <Link to={`/singleBook/${item.bookId}`} key={item.whiteListId}>
+              <div className="bg-white rounded-xl shadow hover:shadow-lg transition-shadow duration-300 p-4 flex flex-col items-center w-72 mx-auto">
                 <img
                   src={item.coverImage}
                   alt={item.bookTitle}
-                  style={{
-                    width: '150px',
-                    height: '225px',
-                    borderRadius: '5px',
-                    marginBottom: '10px'
-                  }}
+                  className="w-36 h-40 object-cover rounded mb-4"
                 />
-                <div>
-                  <strong style={{ fontSize: '18px', color: '#333' }}>{item.bookTitle}</strong>
-                  <p style={{ fontStyle: 'italic', color: '#555' }}>by {item.bookAuthor}</p>
-                  <span style={{ fontStyle: 'italic', color: '#555' }}>{item.genre} - {item.category}</span>
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-indigo-800">{item.bookTitle}</h3>
+                  <p className="text-sm text-gray-600 italic">by {item.bookAuthor}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {item.genre} • {item.category}
+                  </p>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

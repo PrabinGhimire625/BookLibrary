@@ -41,7 +41,7 @@ const OrderDetails = () => {
   console.log("Single order", singleOrder);
 
   return (
-    <div className="min-h-screen py-10 px-6 md:px-16 bg-gray-100 text-black">
+    <div className="min-h-screen py-10 px-6 md:px-16 bg-gray-50 text-black">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="bg-white shadow rounded-lg p-6">

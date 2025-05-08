@@ -65,7 +65,7 @@ const MyOrder = () => {
 
                 <tr
                   key={order.orderId}
-                  className="border-b hover:bg-gray-50 transition duration-200"
+                  className="border-b hover:bg-gray-30 transition duration-200"
                 >
                   <td className="px-6 py-4">
                     <div className="space-y-3">

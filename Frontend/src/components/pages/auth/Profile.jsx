@@ -18,7 +18,6 @@ const Profile = () => {
         dispatch(userProfile());
     }, [dispatch]);
 
-    // Fill form data with existing user info
     useEffect(() => {
         if (profile) {
             setFormData({
@@ -35,28 +34,25 @@ const Profile = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        // Dispatch the update profile action
-        await dispatch(updateUserProfile({ id: profile.id, userData: formData }));
-
-        // Check if the update was successful by looking at the status in the store
-        if (status === 'success') {
-            toast.success('Profile updated');
-            setIsEditing(false);
-            dispatch(userProfile()); // Re-fetch user profile after update
-        } else {
-            toast.error('Failed to update profile.');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await dispatch(updateUserProfile({ id: profile.id, userData: formData }));
+            if (status === 'success') {
+                toast.success('Profile updated');
+                setIsEditing(false);
+                dispatch(userProfile());
+            } else {
+                toast.error('Failed to update profile.');
+            }
+        } catch (error) {
+            toast.error('An error occurred while updating.');
         }
-    } catch (error) {
-        toast.error('An error occurred while updating.');
-    }
-};
+    };
 
     if (status === 'loading') {
         return (
-            <div className="flex items-center justify-center h-screen bg-white">
+            <div className="flex justify-center py-20 bg-white">
                 <p className="text-lg font-semibold text-gray-700">Loading profile...</p>
             </div>
         );
@@ -64,15 +60,15 @@ const handleSubmit = async (e) => {
 
     if (!profile) {
         return (
-            <div className="flex items-center justify-center h-screen bg-white">
+            <div className="flex justify-center py-20 bg-white">
                 <p className="text-lg text-red-600 font-semibold">Failed to load profile.</p>
             </div>
         );
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white via-gray-50 to-white px-4 py-10">
-            <div className="bg-white shadow-2xl rounded-3xl w-full max-w-2xl p-8 border border-gray-200">
+        <div className="w-full px-4 md:px-8 py-10 bg-gradient-to-b from-white via-gray-50 to-white">
+            <div className="bg-white shadow-2xl rounded-3xl max-w-3xl mx-auto p-6 md:p-10 border border-gray-200">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-extrabold text-gray-800">👤 User Profile</h1>
                     <p className="text-gray-500 mt-1">Welcome back, {profile.name?.split(' ')[0]}!</p>
@@ -122,7 +118,6 @@ const handleSubmit = async (e) => {
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-500">Email</label>
-                                {/* Disable email field */}
                                 <input
                                     name="email"
                                     value={formData.email}
@@ -161,7 +156,6 @@ const handleSubmit = async (e) => {
                                 type="button"
                                 onClick={() => {
                                     setIsEditing(false);
-                                    // Reset form to original profile values
                                     setFormData({
                                         name: profile.name || '',
                                         email: profile.email || '',

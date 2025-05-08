@@ -3,32 +3,19 @@ import axios from "axios";
 import Navbar from './../../globals/Navbar';
 import Card from './../../globals/Card';
 import ListAllBook from "../../../adminDashboard/Book/ListAllBook";
+import TopRatedBook from "./TopRatedBook";
+import LatestBook from "./LatestBook";
+import HistoricalBook from "./HistoricalBook";
+import RomanceBook from "./RomanceBook";
 
 const Home = () => {
-  // const [books, setBooks] = useState([]);
-  
-  // // const fetchBooks = async () => {
-  // //   try {
-  // //     const response = await axios.get("http://localhost:3000/book");
-  // //     if (response.status === 200) {
-  // //       setBooks(response.data.data);
-  // //     }
-  // //   } catch (error) {
-  // //     console.error("Error fetching books:", error);
-  // //   }
-  // // };
-  
-  // // useEffect(() => {
-  // //   fetchBooks();
-  // // }, []);
 
   return (
     <>
-      <Navbar />
-      <ListAllBook/>
-         
-
-
+      <TopRatedBook />
+      <LatestBook />
+      <HistoricalBook />
+      <RomanceBook />
     </>
   );
 };

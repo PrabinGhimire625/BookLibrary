@@ -3,8 +3,7 @@ import Login from './components/pages/auth/Login';
 import Home from './components/pages/home/Home';
 import Product from './components/pages/product/Product';
 import Register from './components/pages/auth/Register';
-import AboutUs from './components/pages/home/About';
-import ContactUs from './components/pages/home/Contact';
+
 import { Provider } from 'react-redux';
 import store from "./components/store/store";
 import { ToastContainer } from 'react-toastify';
@@ -31,6 +30,8 @@ import WhiteList from './components/pages/whiteList/WhiteList';
 import Review from './components/pages/order/Review';
 import StaffDashboard from './staffDashboard/StaffDashboard';
 import ProtectedRoute from './components/routes/ProtectedRoute';
+import AboutUs from './components/pages/about/About';
+import ContactUs from './components/pages/contact/Contact';
 
 
 function App() {
@@ -38,8 +39,8 @@ function App() {
     <Provider store={store}>
       <ToastContainer position="top-right" autoClose={3000} />
       <Navbar />
-      <div className="pt-16">
-        <Routes>
+      <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
+      <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
