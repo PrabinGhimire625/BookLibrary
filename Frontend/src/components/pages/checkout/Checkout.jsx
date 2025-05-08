@@ -1,58 +1,90 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { listAllCartItem, removeBookFromCart } from '../../store/cartSlice'
-import { Link, useNavigate } from 'react-router-dom'
-import { submitOrder } from '../../store/orderSlice'
-import { toast } from 'react-toastify'
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { listAllCartItem, removeBookFromCart } from '../../store/cartSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchDeliveredOrders, submitOrder } from '../../store/orderSlice';
+import { toast } from 'react-toastify';
 
 const Checkout = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { cart } = useSelector((state) => state.cart)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { cart } = useSelector((state) => state.cart);
+  const { deliveredOrders } = useSelector((state) => state.order);
 
-  const [paymentMethod, setPaymentMethod] = useState('COD')
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [shippingAddress, setShippingAddress] = useState('')
-  const [error, setError] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('COD');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
+  const [error, setError] = useState('');
+  const [discount, setDiscount] = useState(0); // Store discount value
+  const [totalPrice, setTotalPrice] = useState(0); // Store total price after discount
 
   useEffect(() => {
-    dispatch(listAllCartItem())
-  }, [dispatch])
+    dispatch(listAllCartItem());
+    dispatch(fetchDeliveredOrders());
+  }, [dispatch]);
 
-  const totalQuantity = cart.reduce((sum, item) => sum + (item.totalItems || 0), 0)
+  const totalQuantity = cart.reduce((sum, item) => sum + (item.totalItems || 0), 0);
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.book?.price || 0) * (item.totalItems || 1),
     0
-  )
-  const shipping = cart.length > 0 ? 100 : 0
-  const total = subtotal + shipping
+  );
 
-  
+  // Set shipping fee to 0 directly
+  const shipping = 0;
+
+  let calculatedTotal = subtotal + shipping;
+
+  // Apply discount logic
+  const handleDiscount = () => {
+    let appliedDiscount = 0;
+
+    // Apply 5% discount for 5+ books
+    if (totalQuantity >= 5) {
+      appliedDiscount += 5; 
+    }
+
+    // Fetch the successful orders count and apply additional 10% discount if needed
+    const successfulOrders = deliveredOrders.length; // This should come from the backend
+    if (successfulOrders >= 10) {
+      appliedDiscount += 10; // 10% discount for 10 successful orders
+    }
+
+    setDiscount(appliedDiscount);
+
+    // Calculate total after discount
+    const discountAmount = (appliedDiscount / 100) * subtotal;
+    setTotalPrice(calculatedTotal - discountAmount);
+  };
+
+  useEffect(() => {
+    handleDiscount();
+  }, [cart, totalQuantity, subtotal, deliveredOrders]);
+
   const handlePlaceOrder = async () => {
     const phoneRegex = /^[0-9]+$/;
-  
+
     if (!phoneNumber || !shippingAddress) {
       setError('Please fill in all required fields');
       return;
     }
-  
+
     if (!phoneRegex.test(phoneNumber)) {
       toast.error('Phone number must contain only digits.');
       return;
     }
-  
+
     setError('');
-  
+
     const orderData = {
       phoneNumber,
       shippingAddress,
-      orderItems: cart.map(item => ({
+      orderItems: cart.map((item) => ({
         bookId: item.book.id,
         quantity: item.totalItems,
-        unitPrice: item.book.price
-      }))
+        unitPrice: item.book.price,
+      })),
     };
-  
+
     try {
       await dispatch(submitOrder(orderData));
       toast.success("Order placed successfully!");
@@ -63,16 +95,15 @@ const Checkout = () => {
       toast.error('Failed to place order. Please try again.');
     }
   };
-  
-  
-  
+
+  console.log("Discount ", discount)
+  console.log("Delivered order", deliveredOrders.length)
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 py-10">
       <h1 className="text-3xl font-extrabold text-center mb-10 tracking-wide">🛍️ Checkout</h1>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 px-6">
-
         {/* Order Summary */}
         <div className="bg-white p-6 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold text-gray-800">Order Summary</h2>
@@ -165,24 +196,31 @@ const Checkout = () => {
               <p className="text-gray-700">Shipping</p>
               <p className="text-gray-700">Rs. {shipping}</p>
             </div>
-            <hr className="my-4 border-gray-300" />
-            <div className="flex justify-between font-semibold text-gray-900">
-              <p>Total</p>
-              <p>Rs. {total.toFixed(2)}</p>
+            <div className="flex justify-between">
+              <p className="text-gray-700">Discount</p>
+              <p className="text-gray-700">
+                - Rs. {(subtotal * discount / 100).toFixed(2)} ({discount}%)
+              </p>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <p className="text-lg">Total</p>
+              <p className="text-lg">Rs. {totalPrice.toFixed(2)}</p>
             </div>
           </div>
 
           {/* Place Order Button */}
-          <button
-            onClick={handlePlaceOrder}
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2 px-4 rounded-lg mt-6 font-medium"
-          >
-            Place Order
-          </button>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handlePlaceOrder}
+              className="bg-blue-500 text-white p-3 rounded-lg w-full"
+            >
+              Place Order
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Checkout
+export default Checkout;

@@ -24,6 +24,7 @@ namespace BookLibrary.Controllers
             _logger = logger;
         }
 
+        //place order
         [Authorize]
         [HttpPost("place")]
         [Authorize(Policy = "RequireUserRole")]
@@ -57,9 +58,7 @@ namespace BookLibrary.Controllers
             {
                 _logger.LogInformation("Checking if Book with ID {BookId} exists in database.", orderItem.BookId);
 
-                // Ensure the Book exists in the database
                 var bookExists = await db.Books.AnyAsync(b => b.Id == orderItem.BookId);
-
                 if (!bookExists)
                 {
                     _logger.LogWarning("Book with ID {BookId} does not exist.", orderItem.BookId);
@@ -67,38 +66,47 @@ namespace BookLibrary.Controllers
                 }
             }
 
-            // Calculate totals
+            // Calculate total price and quantities
             decimal totalPrice = order.OrderItems.Sum(item => item.UnitPrice * item.Quantity);
             int totalBooks = order.OrderItems.Sum(item => item.Quantity);
             decimal discountPercent = 0;
 
-            // Apply discount for 5 or more books
+            // Apply 5% discount if total books >= 5
             if (totalBooks >= 5)
+            {
                 discountPercent += 5;
+                _logger.LogInformation("Applied 5% discount for ordering {TotalBooks} books.", totalBooks);
+            }
 
-            // Apply additional discount for every 10 successful orders
+            // Check how many successful orders the user has
             int successfulOrders = await db.Orders.CountAsync(o =>
                 o.UserId == order.UserId && o.OrderStatus == OrderStatus.Delivered);
 
-            if (successfulOrders > 0 && successfulOrders % 10 == 0)
+            // Apply additional 10% discount if user has 10 or more successful orders
+            if (successfulOrders >= 10)
+            {
                 discountPercent += 10;
+                _logger.LogInformation("Applied 10% loyalty discount for {SuccessfulOrders} successful orders.", successfulOrders);
+            }
 
-            order.TotalPrice = totalPrice - (totalPrice * discountPercent / 100);
+            // Final total after discounts
+            decimal discountedTotal = totalPrice - (totalPrice * discountPercent / 100);
+            order.TotalPrice = Math.Round(discountedTotal, 2);
             order.DiscountPercent = discountPercent;
 
-            // Explicitly set order status
+            // Set order meta
             order.OrderStatus = OrderStatus.Pending;
             order.ClaimCode = Guid.NewGuid().ToString("N")[..8].ToUpper(); // Safe & uppercase
             order.OrderDate = DateTime.UtcNow;
 
-            var orderItems = order.OrderItems.ToList(); // Detach items to save them separately
+            var orderItems = order.OrderItems.ToList(); // Detach and save separately
             order.OrderItems = null;
 
-            // Save Order to database
+            // Save order
             await db.Orders.AddAsync(order);
             await db.SaveChangesAsync();
 
-            // Save OrderItems separately
+            // Save order items
             foreach (var item in orderItems)
             {
                 item.OrderItemId = Guid.NewGuid();
@@ -108,7 +116,7 @@ namespace BookLibrary.Controllers
 
             await db.SaveChangesAsync();
 
-            // Double-check saved status
+            // Check if order saved properly
             var savedOrder = await db.Orders.AsNoTracking()
                 .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
 
@@ -125,13 +133,17 @@ namespace BookLibrary.Controllers
                 message = "Order placed successfully",
                 orderId = savedOrder.OrderId,
                 claimCode = savedOrder.ClaimCode,
-                status = savedOrder.OrderStatus.ToString()
+                status = savedOrder.OrderStatus.ToString(),
+                discountApplied = discountPercent,
+                totalPrice = savedOrder.TotalPrice
             });
         }
 
+
+        //get all the orders
         [Authorize]
         [HttpGet("getAll")]
-        [Authorize(Policy = "RequireAdminRole")] // Ensure only admins can access
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await db.Orders.ToListAsync();
@@ -145,7 +157,7 @@ namespace BookLibrary.Controllers
         }
 
 
-
+        // get the pending order only
         [Authorize]
         [HttpGet("pending")]
         [Authorize(Policy = "RequireUserRole")]
@@ -191,53 +203,54 @@ namespace BookLibrary.Controllers
             return Ok(result);
         }
 
-     [Authorize]
-[HttpGet("delivered")]
-[Authorize(Policy = "RequireUserRole")]
-public async Task<IActionResult> GetDeliveredOrders()
-{
-    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    if (userId == null)
-    {
-        _logger.LogWarning("Unauthorized access attempt to fetch delivered orders.");
-        return Unauthorized();
-    }
-
-    var parsedUserId = Guid.Parse(userId);
-
-    // Fetch the delivered orders along with the necessary Book details
-    var deliveredOrders = await db.Orders
-        .Include(o => o.OrderItems)
-        .ThenInclude(oi => oi.Book) // Include related Book data
-        .Where(o => o.UserId == parsedUserId && o.OrderStatus == OrderStatus.Delivered)
-        .OrderByDescending(o => o.OrderDate)
-        .ToListAsync();
-
-    if (!deliveredOrders.Any())
-    {
-        return NotFound("No delivered orders found.");
-    }
-
-    var result = deliveredOrders.Select(o => new PendingOrderDto
-    {
-        OrderId = o.OrderId,
-        OrderDate = o.OrderDate,
-        Status = o.OrderStatus.ToString(),
-        Items = o.OrderItems.Select(oi => new OrderItemDto
+        //get the already delivered order
+        [Authorize]
+        [HttpGet("delivered")]
+        [Authorize(Policy = "RequireUserRole")]
+        public async Task<IActionResult> GetDeliveredOrders()
         {
-            BookTitle = oi.Book.Title,
-            Quantity = oi.Quantity,
-            PricePerUnit = oi.UnitPrice,
-            CoverImage = oi.Book.CoverImage,     // Add CoverImage
-            Genre = oi.Book.Genre,               // Add Genre
-            Category = oi.Book.Category          // Add Category
-        }).ToList()
-    }).ToList();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                _logger.LogWarning("Unauthorized access attempt to fetch delivered orders.");
+                return Unauthorized();
+            }
 
-    return Ok(result);
-}
+            var parsedUserId = Guid.Parse(userId);
 
+            // Fetch the delivered orders along with the necessary Book details
+            var deliveredOrders = await db.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .Where(o => o.UserId == parsedUserId && o.OrderStatus == OrderStatus.Delivered)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
 
+            if (!deliveredOrders.Any())
+            {
+                return NotFound("No delivered orders found.");
+            }
+
+            var result = deliveredOrders.Select(o => new PendingOrderDto
+            {
+                OrderId = o.OrderId,
+                OrderDate = o.OrderDate,
+                Status = o.OrderStatus.ToString(),
+                Items = o.OrderItems.Select(oi => new OrderItemDto
+                {
+                    BookTitle = oi.Book.Title,
+                    Quantity = oi.Quantity,
+                    PricePerUnit = oi.UnitPrice,
+                    CoverImage = oi.Book.CoverImage,
+                    Genre = oi.Book.Genre,
+                    Category = oi.Book.Category
+                }).ToList()
+            }).ToList();
+
+            return Ok(result);
+        }
+
+        //cancle the order
         [Authorize]
         [HttpPatch("cancel/{orderId}")]
         [Authorize(Policy = "RequireUserRole")]
@@ -252,7 +265,6 @@ public async Task<IActionResult> GetDeliveredOrders()
 
             var parsedUserId = Guid.Parse(userId);
 
-            // Find the order that belongs to the current user
             var order = await db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == parsedUserId);
 
             if (order == null)
@@ -261,7 +273,6 @@ public async Task<IActionResult> GetDeliveredOrders()
                 return NotFound("Order not found or you do not have permission to cancel it.");
             }
 
-            // Only allow cancellation if order is still pending
             if (order.OrderStatus != OrderStatus.Pending)
             {
                 _logger.LogWarning("Attempt to cancel a non-pending order with ID {OrderId}.", orderId);
@@ -270,8 +281,6 @@ public async Task<IActionResult> GetDeliveredOrders()
 
             // Update the status to Cancelled
             order.OrderStatus = OrderStatus.Cancelled;
-
-            // Save changes
             await db.SaveChangesAsync();
 
             _logger.LogInformation("Order with ID {OrderId} was successfully cancelled.", orderId);
@@ -284,6 +293,7 @@ public async Task<IActionResult> GetDeliveredOrders()
             });
         }
 
+        //get all the cancel order
         [Authorize]
         [HttpGet("cancelled")]
         [Authorize(Policy = "RequireUserRole")]
@@ -330,7 +340,7 @@ public async Task<IActionResult> GetDeliveredOrders()
             return Ok(result);
         }
 
-
+        //get the sing order details
         [Authorize]
         [HttpGet("{orderId}")]
         [Authorize(Policy = "RequireUserRole")]
@@ -363,7 +373,7 @@ public async Task<IActionResult> GetDeliveredOrders()
                 Items = order.OrderItems.Select(oi => new OrderItemDto
                 {
                     BookTitle = oi.Book.Title,
-                    BookId = oi.Book.Id, 
+                    BookId = oi.Book.Id,
                     CoverImage = oi.Book.CoverImage,
                     Genre = oi.Book.Genre,
                     Category = oi.Book.Category,

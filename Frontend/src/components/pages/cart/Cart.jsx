@@ -36,7 +36,7 @@ const Cart = () => {
     0
   )
   const shipping = cart.length > 0 ? 100 : 0
-  const total = subtotal + shipping
+  const total = subtotal 
 
   return (
     <div className="min-h-screen bg-white text-gray-900 py-10">
