@@ -1,9 +1,11 @@
 import React from "react";
-import Prabin from '../../../assets/Prabin.jpg'; 
-import Jeewan from '../../../assets/Jeewan.jpg'; 
-import Nischay from '../../../assets/Nischay.jpg'; 
-import Ayush from '../../../assets/Ayush.jpg'; 
-import Piyush from '../../../assets/Piyush.jpg'; 
+import Prabin from '../../../assets/Prabin.jpg';
+import Jeewan from '../../../assets/Jeewan.jpg';
+import Nischay from '../../../assets/Nischay.jpg';
+import Ayush from '../../../assets/Ayush.jpg';
+import Piyush from '../../../assets/Piyush.jpg';
+import Navbar from "../../globals/Navbar";
+import Footer from "../../globals/Footer";
 
 const teamMembers = [
   {
@@ -38,7 +40,7 @@ const teamMembers = [
       "Ayush builds responsive user interfaces and ensures smooth interaction for all users.",
     image: Ayush
   },
-  
+
   {
     name: "Piyush Nepal",
     role: "UI/UX Designer",
@@ -51,34 +53,41 @@ const teamMembers = [
 
 const AboutUs = () => {
   return (
-    <div className="min-h-screen py-12 px-12">
-      <h1 className="text-4xl font-bold text-center text-indigo-800 mb-12">
-        Meet Our Team
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {teamMembers.map((member, index) => (
-          <div
-            key={index}
-            className="bg-white border border-indigo-200 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow duration-300"
-          >
-            <img
-              src={member.image}
-              alt={member.name}
-              className="w-24 h-24 mx-auto rounded-full mb-4 object-cover"
-            />
-            <h2 className="text-xl font-semibold text-indigo-900">
-              {member.name}
-            </h2>
-            <p className="text-indigo-700 mb-2">{member.role}</p>
-            <p className="text-sm text-gray-600 mb-2">{member.description}</p>
-            <p className="text-sm text-indigo-600 font-medium">
-              {member.expertise}
-            </p>
+    <>
+      <Navbar />
+      <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
+
+        <div className="min-h-screen py-12 px-12">
+          <h1 className="text-4xl font-bold text-center text-indigo-800 mb-12">
+            Meet Our Team
+          </h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {teamMembers.map((member, index) => (
+              <div
+                key={index}
+                className="bg-white border border-indigo-200 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow duration-300"
+              >
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-24 h-24 mx-auto rounded-full mb-4 object-cover"
+                />
+                <h2 className="text-xl font-semibold text-indigo-900">
+                  {member.name}
+                </h2>
+                <p className="text-indigo-700 mb-2">{member.role}</p>
+                <p className="text-sm text-gray-600 mb-2">{member.description}</p>
+                <p className="text-sm text-indigo-600 font-medium">
+                  {member.expertise}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
-  );
+        </div>
+        </div>
+        <Footer/>
+      </>
+      );
 };
 
-export default AboutUs;
+      export default AboutUs;

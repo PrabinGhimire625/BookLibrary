@@ -1,9 +1,14 @@
 import React from "react";
+import Navbar from "../../globals/Navbar";
+import Footer from "../../globals/Footer";
+
 
 const ContactUs = () => {
   return (
     <>
-      <div className="min-h-screen py-16 px-6 pt-24 bg-gradient-to-br from-white via-gray-30 to-white">
+      <Navbar />
+      <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
+      <div className=" py-16 px-6 pt-24 bg-gradient-to-br from-white via-gray-30 to-white">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           {/* Contact Information */}
           <div className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-200 transition duration-300 hover:scale-[1.02]">
@@ -54,6 +59,8 @@ const ContactUs = () => {
           </div>
         </div>
       </div>
+      </div>
+      <Footer/>
     </>
   );
 };

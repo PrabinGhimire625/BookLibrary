@@ -6,6 +6,7 @@ import Profile from '../../assets/Profile.jpg';
 import { FaShoppingCart } from "react-icons/fa";
 import { resetStatus } from "../store/authSlice";
 import { FiLogOut } from "react-icons/fi";
+import { HiMenu } from "react-icons/hi";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const Navbar = () => {
   const { cart } = useSelector((state) => state.cart);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     const localStorageToken = localStorage.getItem('token');
@@ -46,10 +48,12 @@ const Navbar = () => {
             <img src={Logo} className="h-10 w-10 object-contain" alt="Logo" />
             <span className="text-2xl font-bold text-gray-800">BookLibrary</span>
           </Link>
+
+          {/* Search Bar */}
           <input
             type="text"
             placeholder="Search books..."
-            className="px-3 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 w-64 ml-16 "
+            className="px-3 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 w-64 ml-16 hidden md:block"
           />
         </div>
 
@@ -80,6 +84,7 @@ const Navbar = () => {
             )}
           </Link>
 
+          {/* Login/Signup or Profile Dropdown */}
           {!isLoggedIn ? (
             <>
               <Link to="/register">
@@ -92,7 +97,6 @@ const Navbar = () => {
                   Login
                 </button>
               </Link>
-
             </>
           ) : (
             <div className="relative dropdown-profile">
@@ -133,7 +137,56 @@ const Navbar = () => {
             </div>
           )}
         </div>
+
+        {/* Mobile Hamburger Menu */}
+        <div className="md:hidden flex items-center">
+          <HiMenu
+            className="text-gray-700 text-3xl cursor-pointer"
+            onClick={() => setShowMenu(!showMenu)}
+          />
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {showMenu && (
+        <div className="md:hidden bg-white shadow-md w-full fixed z-40 top-0 left-0 mt-16 px-4 py-2">
+          <ul className="space-y-4">
+            {['Home', 'Products', 'About', 'Services', 'Contact'].map((item) => (
+              <li key={item}>
+                <Link
+                  to={`/${item.toLowerCase() === 'home' ? '' : item.toLowerCase()}`}
+                  className="text-gray-700 hover:text-blue-600 block"
+                  onClick={() => setShowMenu(false)}
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
+            <li>
+              {!isLoggedIn ? (
+                <>
+                  <Link to="/login" onClick={() => setShowMenu(false)}>
+                    Login
+                  </Link>
+                  <Link to="/register" onClick={() => setShowMenu(false)}>
+                    Sign up
+                  </Link>
+                </>
+              ) : (
+                <div>
+                  <Link to="/profile" onClick={() => setShowMenu(false)}>Profile</Link>
+                  <button
+                    onClick={handleLogout}
+                    className="mt-4 text-red-600"
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
+            </li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 };

@@ -66,7 +66,7 @@ namespace BookLibrary.Controllers
                 }
             }
 
-            // Calculate total price and quantities
+            // Calculate total price and quantitiesa
             decimal totalPrice = order.OrderItems.Sum(item => item.UnitPrice * item.Quantity);
             int totalBooks = order.OrderItems.Sum(item => item.Quantity);
             decimal discountPercent = 0;
@@ -97,6 +97,7 @@ namespace BookLibrary.Controllers
             // Set order meta
             order.OrderStatus = OrderStatus.Pending;
             order.ClaimCode = Guid.NewGuid().ToString("N")[..8].ToUpper(); // Safe & uppercase
+            //send to the register email  
             order.OrderDate = DateTime.UtcNow;
 
             var orderItems = order.OrderItems.ToList(); // Detach and save separately

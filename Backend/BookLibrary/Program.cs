@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BookLibrary.Middlewares;
+using BookLibrary.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<DatabaseConnection>(options =>
 ); 
 
 builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddHostedService<BannerCleanupService>();
 
 // JWT Authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

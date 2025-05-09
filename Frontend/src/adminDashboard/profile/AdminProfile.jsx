@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserProfile, userProfile } from '../../store/authSlice';
 import { toast } from 'react-toastify';
-import Navbar from '../../globals/Navbar';
-import Footer from '../../globals/Footer';
+import { updateUserProfile, userProfile } from '../../components/store/authSlice';
+import Sidebar from '../sidebar/Sidebar';
 
-const Profile = () => {
+
+const AdminProfile = () => {
     const dispatch = useDispatch();
     const { status, profile } = useSelector((state) => state.auth);
     const [isEditing, setIsEditing] = useState(false);
@@ -41,7 +41,7 @@ const Profile = () => {
         try {
             await dispatch(updateUserProfile({ id: profile.id, userData: formData }));
             if (status === 'success') {
-                toast.success('Profile updated');
+                toast.success('AdminProfile updated');
                 setIsEditing(false);
                 dispatch(userProfile());
             } else {
@@ -70,12 +70,14 @@ const Profile = () => {
 
     return (
         <>
-            <Navbar />
-            <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
+            <div className="flex flex-col md:flex-row min-h-screen">
+                {/* Sidebar */}
+                <Sidebar />
+
                 <div className="w-full px-4 md:px-8 py-10 bg-gradient-to-b from-white via-gray-50 to-white">
                     <div className="bg-white shadow-2xl rounded-3xl max-w-3xl mx-auto p-6 md:p-10 border border-gray-200">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-extrabold text-gray-800">👤 User Profile</h1>
+                            <h1 className="text-3xl font-extrabold text-gray-800">👤 Profile details</h1>
                             <p className="text-gray-500 mt-1">Welcome back, {profile.name?.split(' ')[0]}!</p>
                         </div>
 
@@ -105,7 +107,7 @@ const Profile = () => {
                                         onClick={() => setIsEditing(true)}
                                         className="bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition duration-300"
                                     >
-                                        ✏️ Edit Profile
+                                        ✏️ Edit AdminProfile
                                     </button>
                                 </div>
                             </>
@@ -178,9 +180,8 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-            <Footer/>
         </>
     );
 };
 
-export default Profile;
+export default AdminProfile;

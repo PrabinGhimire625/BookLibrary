@@ -7,6 +7,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     data: [],
+    userList:[],
     status: STATUS.LOADING,
     token: "",
     profile: ""
@@ -14,6 +15,9 @@ const authSlice = createSlice({
   reducers: {
     setUserData(state, action) {
       state.data = action.payload;
+    },
+    setUserList(state, action) {
+      state.userList = action.payload;
     },
     setStatus(state, action) {
       state.status = action.payload;
@@ -40,7 +44,7 @@ const authSlice = createSlice({
   },
 });
 
-export const {setUserData, setStatus, resetStatus, setToken, setProfile, setUpdateUserProfile} = authSlice.actions;
+export const {setUserData, setStatus, resetStatus, setToken, setProfile, setUpdateUserProfile, setUserList} = authSlice.actions;
 export default authSlice.reducer;
 
 //signup
@@ -131,14 +135,34 @@ export function updateUserProfile({ id, userData }) {
       if (response.status === 200) {
         const { data } = response.data;
         dispatch(setUpdateUserProfile({ id, data }));
-        dispatch(setStatus(STATUS.SUCCESS)); // Set success status
+        dispatch(setStatus(STATUS.SUCCESS)); 
       } else {
-        dispatch(setStatus(STATUS.ERROR)); // Set error status
+        dispatch(setStatus(STATUS.ERROR)); 
         throw new Error('Update failed');
       }
     } catch (err) {
-      dispatch(setStatus(STATUS.ERROR)); // Set error status
+      dispatch(setStatus(STATUS.ERROR)); 
       throw err;
     }
   };
+}
+
+
+
+//profile
+export function ListAllUser() {
+  return async function ListAllUserThunk(dispatch) {
+    dispatch(setStatus(STATUS.LOADING));
+    try {
+      const response = await APIAuthenticated.get("/api/user/getAllUsers");
+      if (response.status === 200) {
+        dispatch(setUserList(response.data));
+        dispatch(setStatus(STATUS.SUCCESS));
+      } else {
+        dispatch(setStatus(STATUS.ERROR));
+      }
+    } catch (err) {
+      dispatch(setStatus(STATUS.ERROR));
+    }
+  }
 }

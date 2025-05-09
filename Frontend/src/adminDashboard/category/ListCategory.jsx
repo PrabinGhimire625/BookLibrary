@@ -57,6 +57,7 @@ const ListCategory = () => {
 
       <div className="w-full md:flex-1 p-4 sm:p-6 md:p-8">
         <div className="bg-white shadow-xl rounded-2xl p-6 md:p-8">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">All Category</h2>
           <div className="space-y-4">
             {category && category.length > 0 ? (
               category.map((item) => (

@@ -4,6 +4,8 @@ import { fetchSingleOrder, cancelOrder } from '../../store/orderSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { STATUS } from '../../globals/status/status';
+import Navbar from '../../globals/Navbar';
+import Footer from '../../globals/Footer';
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -41,6 +43,9 @@ const OrderDetails = () => {
   console.log("Single order", singleOrder);
 
   return (
+    <>
+    <Navbar />
+    <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
     <div className="min-h-screen py-10 px-6 md:px-16 bg-gray-50 text-black">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
@@ -151,6 +156,9 @@ const OrderDetails = () => {
         </div>
       </div>
     </div>
+    </div>
+    <Footer/>
+    </>
   );
 };
 

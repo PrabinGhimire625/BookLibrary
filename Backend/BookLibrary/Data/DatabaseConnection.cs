@@ -1,5 +1,6 @@
 using System;
 using BookLibrary.Model;
+using BookLibrary.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -21,5 +22,6 @@ public class DatabaseConnection : DbContext
     public  DbSet<OrderItem> OrderItems { get; set;}
     public  DbSet<WhiteList> WhiteLists { get; set;}
     public  DbSet<Review> Reviews { get; set;}
+    public  DbSet<BannerAnnouncement> BannerAnnouncements { get; set;}
 
 }

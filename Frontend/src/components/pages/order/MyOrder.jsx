@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Navbar from "../../globals/Navbar";
 import {
   fetchPendingOrders,
   fetchDeliveredOrders,
   fetchCancelledOrder,
   resetOrderState,
 } from "../../store/orderSlice";
+import Footer from "../../globals/Footer";
 
 const MyOrder = () => {
   const dispatch = useDispatch();
@@ -27,118 +29,94 @@ const MyOrder = () => {
     };
   }, [dispatch]);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+  const handleFilterChange = (e) => setFilter(e.target.value);
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
-
-  const filterOrders = (orders) => {
-    return orders.filter((order) =>
+  const filterOrders = (orders) =>
+    orders.filter((order) =>
       order.orderId.toString().includes(searchQuery)
     );
-  };
 
-  const renderOrderTable = (orders) => {
-    return (
-      <div className="overflow-x-auto bg-white shadow-xl rounded-xl p-4">
-        <table className="min-w-full text-sm text-gray-800">
-          <thead className="bg-gray-100 rounded-t-lg">
-            <tr className="text-left">
-              <th className="px-6 py-3 font-semibold tracking-wide">Items</th>
-              <th className="px-6 py-3 font-semibold tracking-wide">Total Amt</th>
-              <th className="px-6 py-3 font-semibold tracking-wide">Order Status</th>
-              <th className="px-6 py-3 font-semibold tracking-wide">Ordered At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filterOrders(orders).map((order) => {
-              const totalAmount = order.items.reduce(
-                (acc, item) => acc + item.pricePerUnit * item.quantity,
-                0
-              );
-              const orderedAt = new Date(order.orderDate).toLocaleString();
+  const renderOrderTable = (orders) => (
+    <div className="overflow-x-auto bg-white shadow-xl rounded-xl p-4">
+      <table className="min-w-full text-sm text-gray-800">
+        <thead className="bg-gray-100 rounded-t-lg">
+          <tr className="text-left">
+            <th className="px-6 py-3 font-semibold tracking-wide">Items</th>
+            <th className="px-6 py-3 font-semibold tracking-wide">Total Amt</th>
+            <th className="px-6 py-3 font-semibold tracking-wide">Order Status</th>
+            <th className="px-6 py-3 font-semibold tracking-wide">Ordered At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filterOrders(orders).map((order) => {
+            const totalAmount = order.items.reduce(
+              (acc, item) => acc + item.pricePerUnit * item.quantity,
+              0
+            );
+            const orderedAt = new Date(order.orderDate).toLocaleString();
 
-              return (
-
-                <tr
-                  key={order.orderId}
-                  className="border-b hover:bg-gray-30 transition duration-200"
-                >
-                  <td className="px-6 py-4">
-                    <div className="space-y-3">
-                      {order.items.map((item, index) => (
-                        <Link
-                          key={index}
-                          to={`/orderDetails/${order.orderId}`} // Link to order details page
-                          className="flex items-center gap-4 cursor-pointer"
-                        >
-                          <img
-                            src={item.coverImage}
-                            alt={item.bookTitle}
-                            className="w-14 h-20 object-cover rounded-lg shadow-sm"
-                          />
-                          <div>
-                            <p className="text-sm font-medium">{item.bookTitle}</p>
-                            <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                            <p className="text-xs text-gray-500">Rs. {item.pricePerUnit}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-gray-900">
-                    <Link
-                      to={`/orderDetails/${order.orderId}`} // Link to order details page
-                      className="cursor-pointer"
-                    >
-                      Rs. {totalAmount.toFixed(2)}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4">
-                    <Link
-                      to={`/orderDetails/${order.orderId}`} // Link to order details page
-                      className="cursor-pointer"
-                    >
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${order.status === 'Delivered'
-                            ? 'bg-green-100 text-green-700'
-                            : order.status === 'Pending'
-                              ? 'bg-yellow-100 text-yellow-700'
-                              : 'bg-red-100 text-red-700'
-                          }`}
+            return (
+              <tr
+                key={order.orderId}
+                className="border-b hover:bg-gray-30 transition duration-200"
+              >
+                <td className="px-6 py-4">
+                  <div className="space-y-3">
+                    {order.items.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={`/orderDetails/${order.orderId}`}
+                        className="flex items-center gap-4 cursor-pointer"
                       >
-                        {order.status}
-                      </span>
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    <Link
-                      to={`/orderDetails/${order.orderId}`} // Link to order details page
-                      className="cursor-pointer"
+                        <img
+                          src={item.coverImage}
+                          alt={item.bookTitle}
+                          className="w-14 h-20 object-cover rounded-lg shadow-sm"
+                        />
+                        <div>
+                          <p className="text-sm font-medium">{item.bookTitle}</p>
+                          <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                          <p className="text-xs text-gray-500">Rs. {item.pricePerUnit}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </td>
+                <td className="px-6 py-4 font-semibold text-gray-900">
+                  <Link to={`/orderDetails/${order.orderId}`}>Rs. {totalAmount.toFixed(2)}</Link>
+                </td>
+                <td className="px-6 py-4">
+                  <Link to={`/orderDetails/${order.orderId}`}>
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                        order.status === "Delivered"
+                          ? "bg-green-100 text-green-700"
+                          : order.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
                     >
-                      {orderedAt}
-                    </Link>
-                  </td>
-                </tr>
-
-
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-
-    );
-  };
+                      {order.status}
+                    </span>
+                  </Link>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  <Link to={`/orderDetails/${order.orderId}`}>{orderedAt}</Link>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
-    <div className="antialiased font-sans bg-gray-50 pt-8 min-h-screen">
-      <div className="container mx-auto px-6 sm:px-8">
-        <h2 className="text-4xl font-bold text-gray-900 mb-8">My Orders</h2>
+    <>
+      <Navbar />
+      <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
+        <h2 className="text-4xl font-bold text-gray-900 mb-8 mt-4">My Orders</h2>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-6">
           <div className="flex gap-2">
@@ -183,21 +161,21 @@ const MyOrder = () => {
           </div>
         </div>
 
-        {/* Filtered Orders Section */}
         <div className="mb-8">
           <h3 className="text-3xl font-semibold text-gray-900 mb-4">
             {filter === "pending"
               ? "Pending Orders"
               : filter === "delivered"
-                ? "Delivered Orders"
-                : "Cancelled Orders"}
+              ? "Delivered Orders"
+              : "Cancelled Orders"}
           </h3>
           {filter === "pending" && renderOrderTable(pendingOrders)}
           {filter === "delivered" && renderOrderTable(deliveredOrders)}
           {filter === "cancelled" && renderOrderTable(cancelOrder)}
         </div>
       </div>
-    </div>
+      <Footer/>
+    </>
   );
 };
 

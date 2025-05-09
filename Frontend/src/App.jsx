@@ -32,14 +32,17 @@ import StaffDashboard from './staffDashboard/StaffDashboard';
 import ProtectedRoute from './components/routes/ProtectedRoute';
 import AboutUs from './components/pages/about/About';
 import ContactUs from './components/pages/contact/Contact';
-
+import Footer from './components/globals/Footer';
+import AddAnnouncement from './adminDashboard/bannerAnnouncement/AddAnnouncement';
+import ListAnnouncement from './adminDashboard/bannerAnnouncement/ListAnnouncement';
+import AdminProfile from './adminDashboard/profile/AdminProfile';
+import UserList from './adminDashboard/List/UserList';
+import OrderList from './adminDashboard/List/OrderList';
 
 function App() {
   return (
     <Provider store={store}>
       <ToastContainer position="top-right" autoClose={3000} />
-      <Navbar />
-      <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
       <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -51,7 +54,6 @@ function App() {
           <Route path="/contact" element={<ContactUs />} />
 
           {/* Member Routes */}
-
           <Route path="/profile" element={<ProtectedRoute element={Profile} allowedRoles={['Member', 'Admin', 'Staff']} />} />
           <Route path="/cart" element={<ProtectedRoute element={Cart} allowedRoles={['Member']} />} />
           <Route path="/checkout" element={<ProtectedRoute element={Checkout} allowedRoles={['Member']} />} />
@@ -62,6 +64,7 @@ function App() {
 
           {/* Admin Routes */}
           <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} allowedRoles={['Admin']} />} />
+          <Route path="/adminProfile" element={<ProtectedRoute element={AdminProfile} allowedRoles={['Admin']} />} />
           <Route path="/addBook" element={<ProtectedRoute element={AddBook} allowedRoles={['Admin']} />} />
           <Route path="/listBook" element={<ProtectedRoute element={ListAllBook} allowedRoles={['Admin']} />} />
           <Route path="/editBook/:id" element={<ProtectedRoute element={EditBook} allowedRoles={['Admin']} />} />
@@ -69,6 +72,10 @@ function App() {
           <Route path="/listCategory" element={<ProtectedRoute element={ListCategory} allowedRoles={['Admin']} />} />
           <Route path="/addGenre" element={<ProtectedRoute element={AddGenre} allowedRoles={['Admin']} />} />
           <Route path="/listGenre" element={<ProtectedRoute element={ListGenre} allowedRoles={['Admin']} />} />
+          <Route path="/addAnnouncement" element={<ProtectedRoute element={AddAnnouncement} allowedRoles={['Admin']} />} />
+          <Route path="/listAnnouncement" element={<ProtectedRoute element={ListAnnouncement} allowedRoles={['Admin']} />} />
+          <Route path="/userList" element={<ProtectedRoute element={UserList} allowedRoles={['Admin']} />} />
+          <Route path="/orderList" element={<ProtectedRoute element={OrderList} allowedRoles={['Admin']} />} />
 
           {/* Staff Routes */}
           <Route path="/staffDashboard" element={<ProtectedRoute element={StaffDashboard} allowedRoles={['Staff']} />} />
@@ -77,8 +84,7 @@ function App() {
           <Route path="/sidebar" element={<ProtectedRoute element={Sidebar} allowedRoles={['Admin', 'Staff']} />} />
 
         </Routes>
-
-      </div>
+      {/* <Footer/> */}
     </Provider>
   );
 }
