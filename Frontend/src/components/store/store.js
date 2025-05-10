@@ -8,6 +8,7 @@ import orderSlice from "./orderSlice"
 import whiteListSlice from "./whiteListSlice"
 import reviewSlice from "./ReviewSlice"
 import announcementSlice from "./AnnouncementSlice"
+import notificationSlice from "./notificationSlice"
 const store = configureStore({
     reducer: {
         auth: authSlice,
@@ -19,6 +20,7 @@ const store = configureStore({
         whiteList:whiteListSlice,
         review:reviewSlice,
         announcement:announcementSlice,
+        notifications:notificationSlice,
 
     }
 })

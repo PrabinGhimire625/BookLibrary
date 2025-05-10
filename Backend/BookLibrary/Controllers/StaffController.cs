@@ -20,11 +20,11 @@ namespace BookLibrary.Controllers
             this.db = db;
         }
 
-        //staff change the status of the order
         [HttpPatch("changeStatus/{orderId}")]
         public async Task<IActionResult> ChangeOrderStatusToDelivered(Guid orderId)
         {
             var order = await db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
             if (order == null)
             {
                 return NotFound($"Order with ID {orderId} not found.");
@@ -41,10 +41,13 @@ namespace BookLibrary.Controllers
             db.Orders.Update(order);
             await db.SaveChangesAsync();
 
+            // Now, we get the UserId from the order itself (not from the logged-in staff)
+            var userId = order.UserId;
+
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                UserId = order.UserId,
+                UserId = userId,  // Save the UserId from the order, not the logged-in staff
                 Message = $"Your order #{order.ClaimCode} has been delivered.",
                 IsRead = false,
                 CreatedAt = DateTime.UtcNow
