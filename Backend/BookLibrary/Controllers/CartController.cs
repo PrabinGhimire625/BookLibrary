@@ -58,7 +58,7 @@ namespace BookLibrary.Controllers
 
             await db.SaveChangesAsync();
 
-            return Ok(new { message = "Cart updated successfully." });
+            return Ok(new { message = "Book added on cart successfully." });
         }
 
         // Get cart items of the logged-in user

@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             OnChallenge = context =>
             {
-                context.HandleResponse(); // prevent default 401 response
+                context.HandleResponse(); 
                 context.Response.StatusCode = 401;
                 context.Response.ContentType = "application/json";
                 return context.Response.WriteAsync("{\"error\": \"Token is required\"}");
@@ -66,6 +66,11 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireRole("Member");
     });
+
+     options.AddPolicy("RequireStaffRole", policy =>
+    {
+        policy.RequireRole("Staff");
+    });
 });
 
 // CORS
@@ -82,17 +87,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-// Global error handler for 403 (forbidden)
-// app.Use(async (context, next) =>
-// {
-//     await next();
-
-//     if (context.Response.StatusCode == 403)
-//     {
-//         context.Response.ContentType = "application/json";
-//         await context.Response.WriteAsync("{\"error\": \"Admin token is required\"}");
-//     }
-// });
 
 // Development-only Swagger
 if (app.Environment.IsDevelopment())

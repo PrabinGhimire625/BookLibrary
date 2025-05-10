@@ -50,7 +50,7 @@ export default cartSlice.reducer;
 
 // Add book to the cart
 export function addToCart(bookId, quantity = 1) {
-    return async function addToCart(dispatch) {
+    return async function addToCartThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
             const response = await APIAuthenticated.post("/api/cart/addToCart", {
@@ -69,8 +69,6 @@ export function addToCart(bookId, quantity = 1) {
         }
     };
 }
-
-
 
 
 // List All cart item

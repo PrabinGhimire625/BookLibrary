@@ -24,21 +24,26 @@ const Login = () => {
     }));
   };
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const user = await dispatch(login(userData));
-    if (user) {
-      toast.success("Login successful");
-      console.log("User role", user.role)
-      if (user.role === "Admin") {
-        navigate("/dashboard");
-      } else {
-        navigate("/");
-      }
+  e.preventDefault();
+  const user = await dispatch(login(userData));
+  if (user) {
+    toast.success("Login successful");
+    console.log("User role", user.role);
+    
+    if (user.role === "Admin") {
+      navigate("/dashboard");
+    } else if (user.role === "Staff") {
+      navigate("/staffDashboard");
     } else {
-      toast.error("Login failed. Please check your credentials.");
+      navigate("/");
     }
-  };
+  } else {
+    toast.error("Login failed. Please check your credentials.");
+  }
+};
+
 
   return (
     <>

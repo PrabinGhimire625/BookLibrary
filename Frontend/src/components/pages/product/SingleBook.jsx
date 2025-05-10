@@ -14,6 +14,7 @@ import Footer from '../../globals/Footer';
 
 const SingleBook = () => {
     const { id } = useParams();
+    console.log("ID for the single book", id);
     const dispatch = useDispatch();
     const { singleBook, status } = useSelector((state) => state.book);
     const { singleBookReview } = useSelector((state) => state.review);
@@ -66,7 +67,7 @@ const SingleBook = () => {
 
     const handleAddToCart = async () => {
         if (id && singleBook) {
-            await dispatch(addToCart({ id, quantity }));
+            await dispatch(addToCart(id, quantity ));
             if (status === STATUS.SUCCESS) {
                 toast.success("Book successfully added to cart!");
             } else if (status === STATUS.ERROR) {

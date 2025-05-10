@@ -24,7 +24,6 @@ namespace BookLibrary.Controllers
             _logger = logger;
         }
 
-        //place order
         [Authorize]
         [HttpPost("place")]
         [Authorize(Policy = "RequireUserRole")]
@@ -66,7 +65,7 @@ namespace BookLibrary.Controllers
                 }
             }
 
-            // Calculate total price and quantitiesa
+            // Calculate total price and quantities
             decimal totalPrice = order.OrderItems.Sum(item => item.UnitPrice * item.Quantity);
             int totalBooks = order.OrderItems.Sum(item => item.Quantity);
             decimal discountPercent = 0;
@@ -97,7 +96,7 @@ namespace BookLibrary.Controllers
             // Set order meta
             order.OrderStatus = OrderStatus.Pending;
             order.ClaimCode = Guid.NewGuid().ToString("N")[..8].ToUpper(); // Safe & uppercase
-            //send to the register email  
+                                                                           //send to the register email  
             order.OrderDate = DateTime.UtcNow;
 
             var orderItems = order.OrderItems.ToList(); // Detach and save separately
@@ -127,11 +126,45 @@ namespace BookLibrary.Controllers
                 return StatusCode(500, "Order save failed.");
             }
 
+            // Remove ordered books from the cart
+            var bookIds = orderItems.Select(oi => oi.BookId).ToList();
+
+            var cartItemsToRemove = await db.Carts
+                .Where(c => c.UserId == order.UserId && bookIds.Contains(c.BookId))
+                .ToListAsync();
+
+            if (cartItemsToRemove.Any())
+            {
+                db.Carts.RemoveRange(cartItemsToRemove);
+                await db.SaveChangesAsync();
+
+                _logger.LogInformation("Removed {Count} items from cart after order.", cartItemsToRemove.Count);
+            }
+
             _logger.LogInformation("Order placed successfully for OrderId: {OrderId}", savedOrder.OrderId);
+
+            // Update the order status to Delivered (simulate this in your system once the order is shipped)
+            savedOrder.OrderStatus = OrderStatus.Delivered;
+            await db.SaveChangesAsync();
+
+            // Save notification once the order is delivered
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = savedOrder.UserId,
+                Message = $"Your order #{savedOrder.OrderId} has been pending you will find it soon.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await db.Notifications.AddAsync(notification);
+            await db.SaveChangesAsync();
+
+            _logger.LogInformation("Notification created for user: {UserId} regarding delivered order: {OrderId}", savedOrder.UserId, savedOrder.OrderId);
 
             return Ok(new
             {
-                message = "Order placed successfully",
+                message = "Order placed successfully and notification saved after delivery.",
                 orderId = savedOrder.OrderId,
                 claimCode = savedOrder.ClaimCode,
                 status = savedOrder.OrderStatus.ToString(),
@@ -140,11 +173,9 @@ namespace BookLibrary.Controllers
             });
         }
 
-
         //get all the orders
         [Authorize]
         [HttpGet("getAll")]
-        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await db.Orders.ToListAsync();
@@ -153,7 +184,6 @@ namespace BookLibrary.Controllers
             {
                 return NotFound("No orders found.");
             }
-
             return Ok(orders);
         }
 

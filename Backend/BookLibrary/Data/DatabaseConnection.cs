@@ -23,5 +23,6 @@ public class DatabaseConnection : DbContext
     public  DbSet<WhiteList> WhiteLists { get; set;}
     public  DbSet<Review> Reviews { get; set;}
     public  DbSet<BannerAnnouncement> BannerAnnouncements { get; set;}
+    public  DbSet<Notification> Notifications { get; set;}
 
 }

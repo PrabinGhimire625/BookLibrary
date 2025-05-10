@@ -75,13 +75,13 @@ function App() {
           <Route path="/addAnnouncement" element={<ProtectedRoute element={AddAnnouncement} allowedRoles={['Admin']} />} />
           <Route path="/listAnnouncement" element={<ProtectedRoute element={ListAnnouncement} allowedRoles={['Admin']} />} />
           <Route path="/userList" element={<ProtectedRoute element={UserList} allowedRoles={['Admin']} />} />
-          <Route path="/orderList" element={<ProtectedRoute element={OrderList} allowedRoles={['Admin']} />} />
+          <Route path="/orderList" element={<ProtectedRoute element={OrderList} allowedRoles={['Admin', 'Staff']} />} />
 
           {/* Staff Routes */}
-          <Route path="/staffDashboard" element={<ProtectedRoute element={StaffDashboard} allowedRoles={['Staff']} />} />
+          <Route path="/staffDashboard" element={<ProtectedRoute element={StaffDashboard} allowedRoles={['Staff', 'Admin']} />} />
 
           {/* Shared Components */}
-          <Route path="/sidebar" element={<ProtectedRoute element={Sidebar} allowedRoles={['Admin', 'Staff']} />} />
+          <Route path="/sidebar" element={<ProtectedRoute element={Sidebar} allowedRoles={['Admin']} />} />
 
         </Routes>
       {/* <Footer/> */}

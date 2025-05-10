@@ -82,8 +82,6 @@ namespace BookLibrary.Controllers
             }
         }
 
-
-
         // GET ALL
         [HttpGet("getAllAnnouncement")]
         public async Task<IActionResult> GetAll()

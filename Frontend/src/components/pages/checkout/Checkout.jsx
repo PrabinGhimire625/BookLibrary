@@ -76,7 +76,7 @@ const Checkout = () => {
     }
 
     setError('');
-
+    
     const orderData = {
       phoneNumber,
       shippingAddress,

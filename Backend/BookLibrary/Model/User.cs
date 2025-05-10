@@ -37,5 +37,6 @@ namespace BookLibrary.Model
     {
         public const string Admin = "Admin";
         public const string User = "Member";
+        public const string Staff = "Staff";
     }
 }

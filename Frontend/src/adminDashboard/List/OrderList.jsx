@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../sidebar/Sidebar';
-import { Pencil, Trash2 } from 'lucide-react'; 
+import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAllOrders } from '../../components/store/orderSlice';
+
 
 const OrderList = () => {
     const dispatch = useDispatch();
@@ -23,7 +24,6 @@ const OrderList = () => {
             </div>
         );
     }
-
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
@@ -51,7 +51,7 @@ const OrderList = () => {
                                     <td className="py-3 px-4">{order.orderId}</td>
                                     <td className="py-3 px-4">{order.phoneNumber}</td>
                                     <td className="py-3 px-4">{order.shippingAddress || 'N/A'}</td>
-                                    <td className="py-3 px-4">${order.totalPrice / 100}</td> 
+                                    <td className="py-3 px-4">${order.totalPrice / 100}</td>
                                     <td className="py-3 px-4">
                                         {order.orderStatus === 3
                                             ? 'Delivered'
@@ -62,13 +62,13 @@ const OrderList = () => {
 
                                     <td className="py-3 px-4 flex space-x-2">
                                         <button
-                                            onClick={() => navigate(`/editOrder/${order.orderId}`)} 
+                                            onClick={() => navigate(`/editOrder/${order.orderId}`)}
                                             className="text-blue-600 hover:text-blue-800"
                                         >
                                             <Pencil size={16} />
                                         </button>
                                         <button
-                                           
+
                                             className="text-red-600 hover:text-red-800"
                                         >
                                             <Trash2 size={16} />
