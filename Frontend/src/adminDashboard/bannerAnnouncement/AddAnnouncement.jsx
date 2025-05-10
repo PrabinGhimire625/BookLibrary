@@ -44,7 +44,6 @@ const AddAnnouncement = () => {
       return;
     }
 
-    // Optional: format to UTC if your backend expects that
     const payload = {
       ...announcementData,
       startTime: new Date(start).toISOString(),

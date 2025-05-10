@@ -91,9 +91,6 @@ const Dashboard = () => {
               <p className="text-sm text-red-600 mt-1">Orders cancelled or failed</p>
             </div>
           </div>
-
-
-
         </div>
       </div>
     </div>

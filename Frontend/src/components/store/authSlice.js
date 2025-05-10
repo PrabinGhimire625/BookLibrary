@@ -66,7 +66,7 @@ export function register(data) {
 }
 
 
-// login.js
+// login
 export function login(data) {
   return async function loginThunk(dispatch) {
     dispatch(setStatus(STATUS.LOADING));
@@ -120,7 +120,7 @@ export function userProfile() {
 //update user
 export function updateUserProfile({ id, userData }) {
   return async function updateUserProfileThunk(dispatch) {
-    dispatch(setStatus(STATUS.LOADING)); // Setting loading state
+    dispatch(setStatus(STATUS.LOADING)); 
     try {
       const response = await APIAuthenticated.patch(
         `/api/user/update/${id}`,

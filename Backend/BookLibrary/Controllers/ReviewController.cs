@@ -18,7 +18,7 @@ namespace BookLibrary.Controllers
             this.db = db;
         }
 
-
+        //give the review rating and comment
         [HttpPost("add")]
         [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> AddReview([FromBody] Review review)
@@ -47,8 +47,6 @@ namespace BookLibrary.Controllers
 
                 db.Reviews.Add(review);
                 await db.SaveChangesAsync();
-
-                // Load user (optional, if needed in response)
                 var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
                 return Ok(new
@@ -104,6 +102,7 @@ namespace BookLibrary.Controllers
             }
         }
 
+        //get the review for the single book
         [HttpGet("singleBook/{bookId}")]
         [Authorize(Policy = "RequireUserRole")]
         public async Task<ActionResult<IEnumerable<object>>> GetReviewsByBookId(Guid bookId)
@@ -145,7 +144,7 @@ namespace BookLibrary.Controllers
             }
         }
 
-
+        //get all book with the rating
         [HttpGet("getAllBook")]
         public async Task<IActionResult> GetAllBooksWithRatingAndReviews()
         {
@@ -183,14 +182,15 @@ namespace BookLibrary.Controllers
             }
         }
 
+        //fetch the latest 5 book
         [HttpGet("latest5Books")]
         public async Task<IActionResult> GetLatest5Books()
         {
             try
             {
                 var latestBooks = await db.Books
-                    .OrderByDescending(b => b.AddedDate)  // Sort books by the date they were added (most recent first)
-                    .Take(5)  // Get the latest 5 books
+                    .OrderByDescending(b => b.AddedDate)
+                    .Take(5)
                     .Select(book => new
                     {
                         id = book.Id,
@@ -223,6 +223,7 @@ namespace BookLibrary.Controllers
         }
 
 
+        //get the latest 5 historical book
         [HttpGet("latest5historicalBooks")]
         public async Task<IActionResult> GetLatest5HistoricalBooks()
         {
@@ -264,6 +265,7 @@ namespace BookLibrary.Controllers
         }
 
 
+        //get the latest 5 romance book
         [HttpGet("latest5RomanceBooks")]
         public async Task<IActionResult> GetLatest5RomanceBooks()
         {
@@ -304,48 +306,45 @@ namespace BookLibrary.Controllers
             }
         }
 
-[HttpGet("top5HighestRatedBooks")]
-public async Task<IActionResult> GetTop5HighestRatedBooks()
-{
-    try
-    {
-        var topRatedBooks = await db.Books
-            .Select(book => new
+        //get the top 5 book based on the rating
+        [HttpGet("top5HighestRatedBooks")]
+        public async Task<IActionResult> GetTop5HighestRatedBooks()
+        {
+            try
             {
-                id = book.Id,
-                title = book.Title,
-                isbn = book.ISBN,
-                author = book.Author,
-                isOnSale = book.IsOnSale,
-                addedDate = book.AddedDate,
-                publicationDate = book.PublicationDate,
-                price = book.Price,
-                genre = book.Genre,
-                category = book.Category,
-                description = book.Description,
-                coverImage = book.CoverImage,
-                stock = book.Stock,
-                averageRating = db.Reviews
-                    .Where(r => r.BookId == book.Id)
-                    .Average(r => (double?)r.Rating) ?? 0.0,
-                totalReviews = db.Reviews
-                    .Count(r => r.BookId == book.Id)
-            })
-            .OrderByDescending(b => b.averageRating)
-            .ThenByDescending(b => b.totalReviews) // optional: prioritize books with more reviews
-            .Take(5)
-            .ToListAsync();
+                var topRatedBooks = await db.Books
+                    .Select(book => new
+                    {
+                        id = book.Id,
+                        title = book.Title,
+                        isbn = book.ISBN,
+                        author = book.Author,
+                        isOnSale = book.IsOnSale,
+                        addedDate = book.AddedDate,
+                        publicationDate = book.PublicationDate,
+                        price = book.Price,
+                        genre = book.Genre,
+                        category = book.Category,
+                        description = book.Description,
+                        coverImage = book.CoverImage,
+                        stock = book.Stock,
+                        averageRating = db.Reviews
+                            .Where(r => r.BookId == book.Id)
+                            .Average(r => (double?)r.Rating) ?? 0.0,
+                        totalReviews = db.Reviews
+                            .Count(r => r.BookId == book.Id)
+                    })
+                    .OrderByDescending(b => b.averageRating)
+                    .ThenByDescending(b => b.totalReviews) 
+                    .Take(5)
+                    .ToListAsync();
 
-        return Ok(new { data = topRatedBooks });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, $"An error occurred while retrieving top rated books: {ex.Message}");
-    }
-}
-
-
-
-
+                return Ok(new { data = topRatedBooks });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving top rated books: {ex.Message}");
+            }
+        }
     }
 }

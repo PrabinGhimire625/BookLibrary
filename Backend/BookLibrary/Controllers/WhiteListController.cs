@@ -20,7 +20,7 @@ namespace BookLibrary.Controllers
             this.db = db;
         }
 
-        // POST: api/WhiteList
+        // Add the book to whitelist
         [HttpPost]
 
         public async Task<IActionResult> AddToWhiteList([FromBody] WhiteListCreateDto dto)
@@ -32,8 +32,7 @@ namespace BookLibrary.Controllers
                 return Unauthorized("User ID not found in token.");
             }
 
-            Guid userId = Guid.Parse(userIdClaim.Value); // Or use TryParse if you want to be extra safe
-
+            Guid userId = Guid.Parse(userIdClaim.Value);
             var exists = await db.WhiteLists
                 .AnyAsync(w => w.UserId == userId && w.BookId == dto.BookId);
 
@@ -55,7 +54,7 @@ namespace BookLibrary.Controllers
             return Ok("Book added to whitelist.");
         }
 
-
+        //remove from the whiselist
         [HttpDelete("delete")]
         public async Task<IActionResult> RemoveFromWhiteList([FromBody] WhiteListDeleteDto dto)
         {
@@ -68,36 +67,35 @@ namespace BookLibrary.Controllers
         }
 
 
-    [HttpGet]
-public async Task<IActionResult> GetWhiteListForUser()
-{
-    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-
-    if (userIdClaim == null)
-    {
-        return Unauthorized("User ID not found in token.");
-    }
-
-    Guid userId = Guid.Parse(userIdClaim.Value);
-
-    var whitelist = await db.WhiteLists
-        .Include(w => w.Book) // assuming there's a navigation property for Book
-        .Where(w => w.UserId == userId)
-        .Select(w => new
+        //Get whitelist  of the user
+        [HttpGet]
+        public async Task<IActionResult> GetWhiteListForUser()
         {
-            w.BookId,
-            CoverImage = w.Book.CoverImage,    
-            BookTitle = w.Book.Title,          
-            BookAuthor = w.Book.Author,   
-            Genre = w.Book.Genre,               
-            Category = w.Book.Category,               
-            w.WhiteListId
-        })
-        .ToListAsync();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
-    return Ok(whitelist);
-}
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token.");
+            }
 
+            Guid userId = Guid.Parse(userIdClaim.Value);
 
+            var whitelist = await db.WhiteLists
+                .Include(w => w.Book)
+                .Where(w => w.UserId == userId)
+                .Select(w => new
+                {
+                    w.BookId,
+                    CoverImage = w.Book.CoverImage,
+                    BookTitle = w.Book.Title,
+                    BookAuthor = w.Book.Author,
+                    Genre = w.Book.Genre,
+                    Category = w.Book.Category,
+                    w.WhiteListId
+                })
+                .ToListAsync();
+
+            return Ok(whitelist);
+        }
     }
 }

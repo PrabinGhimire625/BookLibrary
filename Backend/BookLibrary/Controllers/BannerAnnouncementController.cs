@@ -23,7 +23,7 @@ namespace BookLibrary.Controllers
             _logger = logger;
         }
 
-        // CREATE
+        // CREATE the announcement
         [HttpPost("create")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Create([FromBody] BannerAnnouncement model)

@@ -6,8 +6,8 @@ namespace BookLibrary.Model
 {
     public class Order
     {
-        [Key] // Mark OrderId as the primary key
-        public Guid OrderId { get; set; }  // OrderId as the primary key
+        [Key] 
+        public Guid OrderId { get; set; }  
 
         [Required(ErrorMessage = "User ID is required")]
         public Guid UserId { get; set; }
@@ -35,9 +35,7 @@ namespace BookLibrary.Model
         public decimal? DiscountPercent { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public User? User { get; set; }  // Mark as nullable
-
-         // Add the navigation property for OrderItems
+        public User? User { get; set; } 
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>(); // Initialize as a new list
     }
 

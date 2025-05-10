@@ -89,13 +89,12 @@ const MyOrder = () => {
                 <td className="px-6 py-4">
                   <Link to={`/orderDetails/${order.orderId}`}>
                     <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                        order.status === "Delivered"
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${order.status === "Delivered"
                           ? "bg-green-100 text-green-700"
                           : order.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
                     >
                       {order.status}
                     </span>
@@ -143,7 +142,7 @@ const MyOrder = () => {
               placeholder="Search Orders"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="w-full h-12 rounded-xl border-2 border-gray-300 bg-white text-sm text-gray-800 placeholder-gray-400 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ease-in-out"
+              className="w-full h-12 rounded-xl border-2 border-gray-300 bg-white text-sm text-gray-800 placeholder-gray-400 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all ease-in-out"
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-4">
               <svg
@@ -166,15 +165,15 @@ const MyOrder = () => {
             {filter === "pending"
               ? "Pending Orders"
               : filter === "delivered"
-              ? "Delivered Orders"
-              : "Cancelled Orders"}
+                ? "Delivered Orders"
+                : "Cancelled Orders"}
           </h3>
           {filter === "pending" && renderOrderTable(pendingOrders)}
           {filter === "delivered" && renderOrderTable(deliveredOrders)}
           {filter === "cancelled" && renderOrderTable(cancelOrder)}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

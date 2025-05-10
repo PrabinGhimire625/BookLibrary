@@ -71,7 +71,7 @@ export function addGenre(genreData) {
     };
 }
 
-// List All Books
+// List All genre
 export function listAllGenre() {
     return async function listAllGenreThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));

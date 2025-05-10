@@ -102,7 +102,7 @@ const Navbar = () => {
         {/* Center Nav Links */}
         <div className="hidden md:flex justify-center flex-1 ml-8">
           <ul className="flex space-x-6 text-sm font-medium">
-            {['Home', 'Products', 'About', 'Services', 'Contact'].map((item) => (
+            {['Home', 'Products', 'About', 'Contact', 'MyOrder'].map((item) => (
               <li key={item}>
                 <Link to={`/${item.toLowerCase() === 'home' ? '' : item.toLowerCase()}`} className="text-gray-700 hover:text-blue-600">
                   {item}

@@ -72,7 +72,7 @@ export function addCategory(categoryData) {
     };
 }
 
-// List All Books
+// List All category
 export function listAllCategory() {
     return async function listAllCategoryThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));

@@ -20,6 +20,7 @@ namespace BookLibrary.Controllers
             this.db = db;
         }
 
+        //change the order status by the staff
         [HttpPatch("changeStatus/{orderId}")]
         public async Task<IActionResult> ChangeOrderStatusToDelivered(Guid orderId)
         {
@@ -40,14 +41,12 @@ namespace BookLibrary.Controllers
             order.OrderStatus = OrderStatus.Delivered;
             db.Orders.Update(order);
             await db.SaveChangesAsync();
-
-            // Now, we get the UserId from the order itself (not from the logged-in staff)
             var userId = order.UserId;
 
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                UserId = userId,  // Save the UserId from the order, not the logged-in staff
+                UserId = userId,
                 Message = $"Your order #{order.ClaimCode} has been delivered.",
                 IsRead = false,
                 CreatedAt = DateTime.UtcNow

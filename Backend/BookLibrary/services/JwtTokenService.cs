@@ -27,14 +27,13 @@ public class JwtTokenService
 
         if (string.IsNullOrEmpty(user.Role))
         {
-            user.Role = UserRoles.User; // Default role if not provided
+            user.Role = UserRoles.User; 
         }
 
-        // Ensure that the configuration values exist and are valid
-        var key = _config["Jwt:Key"];  // Change from JwtConfig to Jwt
-        var issuer = _config["Jwt:Issuer"];  // Change from JwtConfig to Jwt
-        var audience = _config["Jwt:Audience"];  // Change from JwtConfig to Jwt
-        var tokenValidityMins = _config["Jwt:ExpiresInMinutes"];  // Change from JwtConfig to Jwt
+        var key = _config["Jwt:Key"];  
+        var issuer = _config["Jwt:Issuer"];  
+        var audience = _config["Jwt:Audience"]; 
+        var tokenValidityMins = _config["Jwt:ExpiresInMinutes"];  
 
         if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience) || string.IsNullOrEmpty(tokenValidityMins))
         {

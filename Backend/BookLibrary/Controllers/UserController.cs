@@ -138,9 +138,6 @@ namespace BookLibrary.Controllers
             });
         }
 
-
-
-
         // Get all users
         [HttpGet("getAllUsers")]
         [Authorize(Policy = "RequireAdminRole")]
@@ -149,8 +146,6 @@ namespace BookLibrary.Controllers
             var users = await db.Users.ToListAsync();
             return Ok(users);
         }
-
-
 
 
         // Update an existing user
@@ -165,12 +160,9 @@ namespace BookLibrary.Controllers
                 return NotFound("User not found.");
             }
 
-            // Update only provided fields
             user.Name = updateUserDto.Name ?? user.Name;
             user.Address = updateUserDto.Address ?? user.Address;
             user.Phone = updateUserDto.Phone ?? user.Phone;
-            // user.Email = updateUserDto.Email ?? user.Email;
-            // user.Role = updateUserDto.Role ?? user.Role;
 
             await db.SaveChangesAsync();
 
@@ -187,8 +179,8 @@ namespace BookLibrary.Controllers
             });
         }
 
-        //get the user details
 
+        //get the user details
         [HttpGet("singleUser/{id}")]
         [Authorize]
         public async Task<IActionResult> GetUserById(Guid id)
@@ -202,9 +194,6 @@ namespace BookLibrary.Controllers
 
             return Ok(user);
         }
-
-
-
 
         // Delete a user
         [HttpDelete("delete/{id}")]

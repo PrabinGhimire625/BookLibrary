@@ -75,7 +75,7 @@ namespace BookLibrary.Controllers
                 return Unauthorized("Invalid user ID format.");
 
             var cartItems = await db.Carts
-                .Include(c => c.Book) // Include Book details if needed
+                .Include(c => c.Book) 
                 .Where(c => c.UserId == userId)
                 .ToListAsync();
 
@@ -127,7 +127,7 @@ namespace BookLibrary.Controllers
 
             // Check if the item exists in the user's cart
             var cartItem = await db.Carts
-                .Include(c => c.Book) // Optional: Include book details
+                .Include(c => c.Book) 
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.BookId == request.BookId);
 
             if (cartItem == null)

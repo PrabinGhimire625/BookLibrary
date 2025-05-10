@@ -14,18 +14,14 @@ namespace BookLibrary.Model
         [Required]
         public Guid BookId { get; set; }
 
-
         [Required]
         public Guid UserId { get; set; }
 
-        
-
-
-         // Navigation Properties
+        // Navigation Properties
         [ForeignKey(nameof(UserId))]
         public User? User { get; set; }
 
         [ForeignKey(nameof(BookId))]
-        public Book? Book { get; set; }
-    }
+        public Book? Book { get; set; }
+    }
 }

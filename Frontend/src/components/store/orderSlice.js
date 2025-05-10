@@ -89,16 +89,12 @@ export function submitOrder(orderData) {
             if (response.status===200) {
                 dispatch(setStatus(STATUS.SUCCESS));
                 dispatch(setItems(response.data));
-                // toast.success("Order placed successfully!");
             } else {
                 dispatch(setStatus(STATUS.ERROR));
-                // toast.error("Failed to place order.");
             }
         } catch (err) {
             const message = err.response?.data?.message || "Something went wrong!";
-            console.error("Error submitting order:", message);
             dispatch(setStatus(STATUS.ERROR));
-            // toast.error(message);
         }
     };
 }

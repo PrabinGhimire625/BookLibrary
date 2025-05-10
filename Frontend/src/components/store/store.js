@@ -21,7 +21,6 @@ const store = configureStore({
         review:reviewSlice,
         announcement:announcementSlice,
         notifications:notificationSlice,
-
     }
 })
 

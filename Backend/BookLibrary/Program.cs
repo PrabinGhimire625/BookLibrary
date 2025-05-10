@@ -87,8 +87,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-
-// Development-only Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

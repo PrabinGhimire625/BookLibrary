@@ -85,16 +85,11 @@ namespace BookLibrary.Controllers
             existingBook.Title = updatedBook.Title;
             existingBook.ISBN = updatedBook.ISBN;
             existingBook.Author = updatedBook.Author;
-            // existingBook.AddedDate = updatedBook.AddedDate;
             existingBook.IsOnSale = updatedBook.IsOnSale;
             existingBook.Price = updatedBook.Price;
             existingBook.CoverImage = updatedBook.CoverImage;
             existingBook.Genre = updatedBook.Genre;
             existingBook.Category = updatedBook.Category;
-            // existingBook.PublicationDate = updatedBook.PublicationDate;
-
-
-            // Ensure AddedDate and PublicationDate are in UTC
             existingBook.AddedDate = existingBook.AddedDate.Kind == DateTimeKind.Utc ? existingBook.AddedDate : existingBook.AddedDate.ToUniversalTime();
             existingBook.PublicationDate = existingBook.PublicationDate.Kind == DateTimeKind.Utc ? existingBook.PublicationDate : existingBook.PublicationDate.ToUniversalTime();
 

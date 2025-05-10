@@ -7,7 +7,7 @@ namespace BookLibrary.Model
     public class OrderItem
     {
         [Key]
-        public Guid OrderItemId { get; set; } = Guid.NewGuid(); // Auto-generate on creation
+        public Guid OrderItemId { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "Quantity is required")]
         [Range(1, 100, ErrorMessage = "Quantity must be between 1 and 100")]
@@ -17,15 +17,15 @@ namespace BookLibrary.Model
         public decimal UnitPrice { get; set; }
 
         [Required(ErrorMessage = "Order ID is required")]
-        public Guid OrderId { get; set; }  // OrderId as Guid (matching the Order model's OrderId)
+        public Guid OrderId { get; set; }  
 
         [Required(ErrorMessage = "Book ID is required")]
-        public Guid BookId { get; set; }  // BookId as Guid
+        public Guid BookId { get; set; }  
 
         [ForeignKey(nameof(OrderId))]
-        public Order? Order { get; set; }  // Relationship with Order (nullable)
+        public Order? Order { get; set; }  
 
         [ForeignKey(nameof(BookId))]
-        public Book? Book { get; set; }  // Relationship with Book (nullable)
+        public Book? Book { get; set; }  
     }
 }

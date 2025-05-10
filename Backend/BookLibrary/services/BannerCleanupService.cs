@@ -23,7 +23,7 @@ namespace BookLibrary.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // Run every hour (you can change this to a different interval if needed)
+            // Run every hour 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try

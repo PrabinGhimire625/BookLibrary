@@ -9,7 +9,7 @@ const ListCategory = () => {
   const dispatch = useDispatch();
   const { category } = useSelector((state) => state.category);
 
-  const [editMode, setEditMode] = useState(null); // currently editing category id
+  const [editMode, setEditMode] = useState(null);
   const [editedName, setEditedName] = useState('');
 
   useEffect(() => {

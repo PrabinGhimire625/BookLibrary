@@ -143,7 +143,7 @@ namespace BookLibrary.Controllers
 
             _logger.LogInformation("Order placed successfully for OrderId: {OrderId}", savedOrder.OrderId);
 
-            // Update the order status to Delivered (simulate this in your system once the order is shipped)
+            // Update the order status to Delivered 
             savedOrder.OrderStatus = OrderStatus.Delivered;
             await db.SaveChangesAsync();
 
