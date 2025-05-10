@@ -38,6 +38,7 @@ import ListAnnouncement from './adminDashboard/bannerAnnouncement/ListAnnounceme
 import AdminProfile from './adminDashboard/profile/AdminProfile';
 import UserList from './adminDashboard/List/UserList';
 import OrderList from './adminDashboard/List/OrderList';
+import Search from './components/pages/search/Search';
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
 
           {/* Shared Components */}
           <Route path="/sidebar" element={<ProtectedRoute element={Sidebar} allowedRoles={['Admin']} />} />
+          <Route path="/search" element={<ProtectedRoute element={Search} allowedRoles={['Admin', 'Member', 'Staff']} />} />
 
         </Routes>
       {/* <Footer/> */}

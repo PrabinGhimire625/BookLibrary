@@ -8,7 +8,7 @@ const bookSlice = createSlice({
         book: [],
         singleBook: null,
         status: STATUS.LOADING,
-      
+        searchBook:[],
     },
     reducers: {
         setBookData(state, action) {
@@ -16,6 +16,9 @@ const bookSlice = createSlice({
         },
         setSingleBook(state, action) {
             state.singleBook = action.payload;
+        },
+        setSearchBook(state, action) {
+            state.searchBook = action.payload;
         },
         setStatus(state, action) {
             state.status = action.payload;
@@ -44,7 +47,7 @@ export const {
     setStatus,
     setDeleteBook,
     setUpdateBook,
-    resetStatus
+    resetStatus, setSearchBook
 } = bookSlice.actions;
 
 export default bookSlice.reducer;
@@ -139,6 +142,26 @@ export function updateBook({ id, bookData }) {
             }
         } catch (err) {
             console.error(err);
+            dispatch(setStatus(STATUS.ERROR));
+        }
+    };
+}
+
+
+// Search books by title, ISBN, description, genre, or category
+export function searchBookDetails(query) {
+    return async function search(dispatch) {
+        dispatch(setStatus(STATUS.LOADING));
+        try {
+            const response = await APIAuthenticated.get(`/api/book/search?query=${query}`);
+            if (response.status === 200) {
+                dispatch(setSearchBook(response.data.data)); 
+                dispatch(setStatus(STATUS.SUCCESS));
+            } else {
+                dispatch(setStatus(STATUS.ERROR));
+            }
+        } catch (err) {
+            console.error("Error fetching search results:", err);
             dispatch(setStatus(STATUS.ERROR));
         }
     };

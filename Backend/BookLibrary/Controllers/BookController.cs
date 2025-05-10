@@ -49,7 +49,7 @@ namespace BookLibrary.Controllers
             return Ok(new { data = book });
         }
 
-        
+
         // Get all the books
         [HttpGet("getAllBook")]
         public async Task<IActionResult> GetAllBooks()
@@ -85,20 +85,20 @@ namespace BookLibrary.Controllers
             existingBook.Title = updatedBook.Title;
             existingBook.ISBN = updatedBook.ISBN;
             existingBook.Author = updatedBook.Author;
-           // existingBook.AddedDate = updatedBook.AddedDate;
+            // existingBook.AddedDate = updatedBook.AddedDate;
             existingBook.IsOnSale = updatedBook.IsOnSale;
             existingBook.Price = updatedBook.Price;
             existingBook.CoverImage = updatedBook.CoverImage;
             existingBook.Genre = updatedBook.Genre;
             existingBook.Category = updatedBook.Category;
-           // existingBook.PublicationDate = updatedBook.PublicationDate;
+            // existingBook.PublicationDate = updatedBook.PublicationDate;
 
-            
+
             // Ensure AddedDate and PublicationDate are in UTC
             existingBook.AddedDate = existingBook.AddedDate.Kind == DateTimeKind.Utc ? existingBook.AddedDate : existingBook.AddedDate.ToUniversalTime();
             existingBook.PublicationDate = existingBook.PublicationDate.Kind == DateTimeKind.Utc ? existingBook.PublicationDate : existingBook.PublicationDate.ToUniversalTime();
 
-            
+
             existingBook.Description = updatedBook.Description;
             existingBook.Stock = updatedBook.Stock;
 
@@ -123,5 +123,66 @@ namespace BookLibrary.Controllers
 
             return Ok(new { data = "Book deleted successfully." });
         }
+
+        // Search books by title, ISBN, description, genre, or category
+        [HttpGet("search")]
+        [Authorize]
+        public async Task<IActionResult> SearchBooks([FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return BadRequest(new { error = "Search query is required." });
+            }
+
+            var lowerQuery = query.ToLower();
+
+            var books = await db.Books
+                .Where(b =>
+                    b.Title.ToLower().Contains(lowerQuery) ||
+                    b.ISBN.ToLower().Contains(lowerQuery) ||
+                    b.Description.ToLower().Contains(lowerQuery) ||
+                    b.Genre.ToLower().Contains(lowerQuery) ||
+                    b.Category.ToLower().Contains(lowerQuery)
+                )
+                .ToListAsync();
+
+            return Ok(new { data = books });
+        }
+
+        // Sort books by title, publication date, or price
+        [HttpGet("sort")]
+        public async Task<IActionResult> SortBooks([FromQuery] string sortBy, [FromQuery] string order)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy) || string.IsNullOrWhiteSpace(order))
+            {
+                return BadRequest(new { error = "Sort criteria and order are required." });
+            }
+
+            var lowerSortBy = sortBy.ToLower();
+            var lowerOrder = order.ToLower();
+
+            IQueryable<Book> query = db.Books;
+
+            // Apply sorting 
+            switch (lowerSortBy)
+            {
+                case "title":
+                    query = lowerOrder == "asc" ? query.OrderBy(b => b.Title) : query.OrderByDescending(b => b.Title);
+                    break;
+                case "publicationdate":
+                    query = lowerOrder == "asc" ? query.OrderBy(b => b.PublicationDate) : query.OrderByDescending(b => b.PublicationDate);
+                    break;
+                case "price":
+                    query = lowerOrder == "asc" ? query.OrderBy(b => b.Price) : query.OrderByDescending(b => b.Price);
+                    break;
+                default:
+                    return BadRequest(new { error = "Invalid sort criteria." });
+            }
+
+            var sortedBooks = await query.ToListAsync();
+
+            return Ok(new { data = sortedBooks });
+        }
+
     }
 }

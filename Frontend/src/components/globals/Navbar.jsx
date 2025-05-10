@@ -22,6 +22,7 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const notificationRef = useRef();
 
 
@@ -30,14 +31,14 @@ const Navbar = () => {
     dispatch(fetchAllUnReadNotification());
   }, [dispatch])
 
- const handleNotificationClick = () => {
-  // Clear unread count
-  dispatch(clearUnreadCount());
+  const handleNotificationClick = () => {
+    // Clear unread count
+    dispatch(clearUnreadCount());
 
-  // Clear unreadNotification list
-  dispatch(setUnreadNotification([]));
-  dispatch(markAllNotificationsAsRead())
-};
+    // Clear unreadNotification list
+    dispatch(setUnreadNotification([]));
+    dispatch(markAllNotificationsAsRead())
+  };
 
   useEffect(() => {
     const localStorageToken = localStorage.getItem('token');
@@ -51,6 +52,21 @@ const Navbar = () => {
     navigate("/login");
   };
 
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (searchQuery.trim()) {
+        const newUrl = `/search?query=${searchQuery.trim()}`;
+
+        // ✅ Navigate only if not already on that search URL
+        if (location.pathname !== '/search' || location.search !== `?query=${searchQuery.trim()}`) {
+          navigate(newUrl);
+        }
+      }
+    }, 300); // debounce to reduce spam
+
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
   // Click outside to close
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -78,6 +94,8 @@ const Navbar = () => {
             type="text"
             placeholder="Search books..."
             className="px-3 py-1.5 rounded-md border border-gray-300 w-64 hidden md:block"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
