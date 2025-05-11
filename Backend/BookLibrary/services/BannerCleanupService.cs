@@ -40,37 +40,37 @@ namespace BookLibrary.Services
             }
         }
 
-      private async Task CleanUpExpiredBanners()
-{
-    using (var scope = _serviceProvider.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseConnection>();
-
-        var currentDateTime = DateTime.UtcNow;
-        _logger.LogInformation($"[BannerCleanup] Current UTC time: {currentDateTime}");
-
-        var expiredBanners = await dbContext.BannerAnnouncements
-            .Where(b => b.EndTime <= currentDateTime)
-            .ToListAsync();
-
-        if (expiredBanners.Any())
+        private async Task CleanUpExpiredBanners()
         {
-            foreach (var banner in expiredBanners)
+            using (var scope = _serviceProvider.CreateScope())
             {
-                _logger.LogInformation($"[BannerCleanup] Deleting expired banner: {banner.Title}, EndTime: {banner.EndTime}");
+                var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseConnection>();
+
+                var currentDateTime = DateTime.UtcNow;
+                _logger.LogInformation($"[BannerCleanup] Current UTC time: {currentDateTime}");
+
+                var expiredBanners = await dbContext.BannerAnnouncements
+                    .Where(b => b.EndTime <= currentDateTime)
+                    .ToListAsync();
+
+                if (expiredBanners.Any())
+                {
+                    foreach (var banner in expiredBanners)
+                    {
+                        _logger.LogInformation($"[BannerCleanup] Deleting expired banner: {banner.Title}, EndTime: {banner.EndTime}");
+                    }
+
+                    dbContext.BannerAnnouncements.RemoveRange(expiredBanners);
+                    await dbContext.SaveChangesAsync();
+
+                    _logger.LogInformation($"[BannerCleanup] {expiredBanners.Count} expired banners deleted.");
+                }
+                else
+                {
+                    _logger.LogInformation("[BannerCleanup] No expired banners found.");
+                }
             }
-
-            dbContext.BannerAnnouncements.RemoveRange(expiredBanners);
-            await dbContext.SaveChangesAsync();
-
-            _logger.LogInformation($"[BannerCleanup] {expiredBanners.Count} expired banners deleted.");
         }
-        else
-        {
-            _logger.LogInformation("[BannerCleanup] No expired banners found.");
-        }
-    }
-}
 
     }
 }

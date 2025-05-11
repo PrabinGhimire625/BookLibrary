@@ -26,8 +26,19 @@ const Checkout = () => {
   }, [dispatch]);
 
   const totalQuantity = cart.reduce((sum, item) => sum + (item.totalItems || 0), 0);
+  
+  // Function to calculate the price after discount for each item
+  const getDiscountedPrice = (book) => {
+    if (!book) return 0;
+    const { price, isOnSale, discountPercentage } = book;
+    if (isOnSale && discountPercentage > 0) {
+      return price - (price * discountPercentage) / 100;
+    }
+    return price;
+  };
+
   const subtotal = cart.reduce(
-    (sum, item) => sum + (item.book?.price || 0) * (item.totalItems || 1),
+    (sum, item) => sum + getDiscountedPrice(item.book) * (item.totalItems || 1),
     0
   );
 
@@ -76,14 +87,14 @@ const Checkout = () => {
     }
 
     setError('');
-    
+
     const orderData = {
       phoneNumber,
       shippingAddress,
       orderItems: cart.map((item) => ({
         bookId: item.book.id,
         quantity: item.totalItems,
-        unitPrice: item.book.price,
+        unitPrice: getDiscountedPrice(item.book),
       })),
     };
 
@@ -97,7 +108,6 @@ const Checkout = () => {
       toast.error('Failed to place order. Please try again.');
     }
   };
-
 
   return (
     <>
@@ -129,7 +139,9 @@ const Checkout = () => {
                         <p className="text-sm text-gray-500">{item.book?.category}</p>
                         <p className="text-xs text-gray-400">Published: {item.book?.publicationDate}</p>
                         <p className="mt-2 text-sm">Quantity: <span className="font-semibold">{item.totalItems}</span></p>
-                        <p className="text-md font-semibold text-gray-700">Rs. {item.book?.price || '0'}</p>
+                        <p className="text-md font-semibold text-gray-700">
+                          Rs. {getDiscountedPrice(item.book).toFixed(2)}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -196,10 +208,6 @@ const Checkout = () => {
                   <p className="text-gray-700">Rs. {subtotal.toFixed(2)}</p>
                 </div>
                 <div className="flex justify-between">
-                  <p className="text-gray-700">Shipping</p>
-                  <p className="text-gray-700">Rs. {shipping}</p>
-                </div>
-                <div className="flex justify-between">
                   <p className="text-gray-700">Discount</p>
                   <p className="text-gray-700">
                     - Rs. {(subtotal * discount / 100).toFixed(2)} ({discount}%)
@@ -224,7 +232,7 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

@@ -50,10 +50,6 @@ const MyOrder = () => {
         </thead>
         <tbody>
           {filterOrders(orders).map((order) => {
-            const totalAmount = order.items.reduce(
-              (acc, item) => acc + item.pricePerUnit * item.quantity,
-              0
-            );
             const orderedAt = new Date(order.orderDate).toLocaleString();
 
             return (
@@ -84,17 +80,18 @@ const MyOrder = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 font-semibold text-gray-900">
-                  <Link to={`/orderDetails/${order.orderId}`}>Rs. {totalAmount.toFixed(2)}</Link>
+                  <Link to={`/orderDetails/${order.orderId}`}>Rs. {order.totalPrice}</Link>
                 </td>
                 <td className="px-6 py-4">
                   <Link to={`/orderDetails/${order.orderId}`}>
                     <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${order.status === "Delivered"
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                        order.status === "Delivered"
                           ? "bg-green-100 text-green-700"
                           : order.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
                     >
                       {order.status}
                     </span>
@@ -165,8 +162,8 @@ const MyOrder = () => {
             {filter === "pending"
               ? "Pending Orders"
               : filter === "delivered"
-                ? "Delivered Orders"
-                : "Cancelled Orders"}
+              ? "Delivered Orders"
+              : "Cancelled Orders"}
           </h3>
           {filter === "pending" && renderOrderTable(pendingOrders)}
           {filter === "delivered" && renderOrderTable(deliveredOrders)}

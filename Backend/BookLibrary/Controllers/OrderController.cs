@@ -219,6 +219,7 @@ namespace BookLibrary.Controllers
             {
                 OrderId = o.OrderId,
                 OrderDate = o.OrderDate,
+                 TotalPrice = o.TotalPrice.ToString(),
                 Status = o.OrderStatus.ToString(),
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
@@ -266,6 +267,7 @@ namespace BookLibrary.Controllers
             {
                 OrderId = o.OrderId,
                 OrderDate = o.OrderDate,
+                 TotalPrice = o.TotalPrice.ToString(),
                 Status = o.OrderStatus.ToString(),
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
@@ -357,6 +359,7 @@ namespace BookLibrary.Controllers
                 OrderId = o.OrderId,
                 OrderDate = o.OrderDate,
                 Status = o.OrderStatus.ToString(),
+                TotalPrice = o.TotalPrice.ToString(),
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
                     BookTitle = oi.Book.Title,
@@ -400,7 +403,10 @@ namespace BookLibrary.Controllers
             {
                 OrderId = order.OrderId,
                 OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice.ToString(),
+
                 Status = order.OrderStatus.ToString(),
+
                 Items = order.OrderItems.Select(oi => new OrderItemDto
                 {
                     BookTitle = oi.Book.Title,

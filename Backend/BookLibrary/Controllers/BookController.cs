@@ -55,7 +55,30 @@ namespace BookLibrary.Controllers
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await db.Books.ToListAsync();
-            return Ok(new { data = books });
+
+            // Map each book to include computed properties like currentPrice, etc.
+            var bookResponses = books.Select(book => new
+            {
+                book.Id,
+                book.Title,
+                book.ISBN,
+                book.Author,
+                book.AddedDate,
+                book.PublicationDate,
+                book.Price,  // Original price
+                currentPrice = book.GetCurrentPrice(),  // Computed discounted price
+                book.Genre,
+                book.Category,
+                book.Description,
+                book.CoverImage,
+                book.IsOnSale,
+                book.DiscountPercentage,
+                book.DiscountStartDate,
+                book.DiscountEndDate,
+                book.Stock
+            }).ToList();
+
+            return Ok(new { data = bookResponses });
         }
 
         // Get a single book by ID
@@ -68,8 +91,31 @@ namespace BookLibrary.Controllers
                 return NotFound(new { error = "Book not found." });
             }
 
-            return Ok(new { data = book });
+            // Return full book details along with computed currentPrice
+            var bookResponse = new
+            {
+                book.Id,
+                book.Title,
+                book.ISBN,
+                book.Author,
+                book.AddedDate,
+                book.PublicationDate,
+                book.Price,  // Original price
+                currentPrice = book.GetCurrentPrice(),  // Computed discounted price
+                book.Genre,
+                book.Category,
+                book.Description,
+                book.CoverImage,
+                book.IsOnSale,
+                book.DiscountPercentage,
+                book.DiscountStartDate,
+                book.DiscountEndDate,
+                book.Stock
+            };
+
+            return Ok(new { data = bookResponse });
         }
+
 
         // Update a book
         [HttpPatch("update/{id}")]
@@ -85,11 +131,16 @@ namespace BookLibrary.Controllers
             existingBook.Title = updatedBook.Title;
             existingBook.ISBN = updatedBook.ISBN;
             existingBook.Author = updatedBook.Author;
+            // existingBook.AddedDate = updatedBook.AddedDate;
             existingBook.IsOnSale = updatedBook.IsOnSale;
             existingBook.Price = updatedBook.Price;
             existingBook.CoverImage = updatedBook.CoverImage;
             existingBook.Genre = updatedBook.Genre;
             existingBook.Category = updatedBook.Category;
+            // existingBook.PublicationDate = updatedBook.PublicationDate;
+
+
+            // Ensure AddedDate and PublicationDate are in UTC
             existingBook.AddedDate = existingBook.AddedDate.Kind == DateTimeKind.Utc ? existingBook.AddedDate : existingBook.AddedDate.ToUniversalTime();
             existingBook.PublicationDate = existingBook.PublicationDate.Kind == DateTimeKind.Utc ? existingBook.PublicationDate : existingBook.PublicationDate.ToUniversalTime();
 
@@ -119,9 +170,8 @@ namespace BookLibrary.Controllers
             return Ok(new { data = "Book deleted successfully." });
         }
 
-        // Search books by title, ISBN, description, genre, or category
+        // Search books by title, ISBN, or description
         [HttpGet("search")]
-        [Authorize]
         public async Task<IActionResult> SearchBooks([FromQuery] string query)
         {
             if (string.IsNullOrWhiteSpace(query))
@@ -135,49 +185,51 @@ namespace BookLibrary.Controllers
                 .Where(b =>
                     b.Title.ToLower().Contains(lowerQuery) ||
                     b.ISBN.ToLower().Contains(lowerQuery) ||
-                    b.Description.ToLower().Contains(lowerQuery) ||
-                    b.Genre.ToLower().Contains(lowerQuery) ||
-                    b.Category.ToLower().Contains(lowerQuery)
+                    b.Description.ToLower().Contains(lowerQuery)
                 )
                 .ToListAsync();
 
             return Ok(new { data = books });
         }
 
-        // Sort books by title, publication date, or price
-        [HttpGet("sort")]
-        public async Task<IActionResult> SortBooks([FromQuery] string sortBy, [FromQuery] string order)
+        // Update discount on the book
+        [HttpPatch("update-discount/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> UpdateDiscount(Guid id, [FromBody] DiscountUpdateDTO discount)
         {
-            if (string.IsNullOrWhiteSpace(sortBy) || string.IsNullOrWhiteSpace(order))
+            var book = await db.Books.FindAsync(id);
+            if (book == null)
             {
-                return BadRequest(new { error = "Sort criteria and order are required." });
+                return NotFound(new { error = "Book not found." });
             }
 
-            var lowerSortBy = sortBy.ToLower();
-            var lowerOrder = order.ToLower();
-
-            IQueryable<Book> query = db.Books;
-
-            // Apply sorting 
-            switch (lowerSortBy)
+            if (discount.DiscountPercentage < 0 || discount.DiscountPercentage > 100)
             {
-                case "title":
-                    query = lowerOrder == "asc" ? query.OrderBy(b => b.Title) : query.OrderByDescending(b => b.Title);
-                    break;
-                case "publicationdate":
-                    query = lowerOrder == "asc" ? query.OrderBy(b => b.PublicationDate) : query.OrderByDescending(b => b.PublicationDate);
-                    break;
-                case "price":
-                    query = lowerOrder == "asc" ? query.OrderBy(b => b.Price) : query.OrderByDescending(b => b.Price);
-                    break;
-                default:
-                    return BadRequest(new { error = "Invalid sort criteria." });
+                return BadRequest(new { error = "Discount percentage must be between 0 and 100." });
             }
 
-            var sortedBooks = await query.ToListAsync();
+            // Update only discount fields
+            book.IsOnSale = true;
+            book.DiscountPercentage = discount.DiscountPercentage;
+            book.DiscountStartDate = discount.DiscountStartDate?.ToUniversalTime();
+            book.DiscountEndDate = discount.DiscountEndDate?.ToUniversalTime();
 
-            return Ok(new { data = sortedBooks });
+            await db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Discount updated successfully.",
+                data = new
+                {
+                    book.Id,
+                    book.Title,
+                    book.Price,
+                    book.DiscountPercentage,
+                    book.DiscountStartDate,
+                    book.DiscountEndDate,
+                    currentPrice = book.GetCurrentPrice()
+                }
+            });
         }
-
     }
 }

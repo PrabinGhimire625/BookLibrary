@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { deleteBook, listAllBook } from '../../components/store/bookSlice';
 import Sidebar from '../sidebar/Sidebar';
-import { ShoppingCart, Bookmark, Pencil, Trash2 } from 'lucide-react';
+import { ShoppingCart, Bookmark, Pencil, Trash2, Percent } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 
@@ -16,7 +16,7 @@ const ListAllBook = () => {
     dispatch(listAllBook());
   }, [dispatch]);
 
-  
+
   const handleDelete = (id) => {
     if (id) {
       dispatch(deleteBook(id));
@@ -57,14 +57,19 @@ const ListAllBook = () => {
 
                 {/* Book Details */}
                 <div className="p-3 flex flex-col justify-between flex-grow relative">
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-800 truncate">{item.title}</h3>
-                    <p className="text-xs text-purple-600 truncate">by {item.author}</p>
-                    <p className="text-sm font-bold text-gray-900 mt-0.5">Rs. {item.price}</p>
-                    <p className="text-xs text-gray-600 mt-1 line-clamp-1">
+                  <div className="p-4 rounded-md bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <h3 className="text-base font-semibold text-gray-900 truncate">{item.title}</h3>
+                    <p className="text-sm text-purple-600 truncate mb-1">by {item.author}</p>
+
+                    <p className="text-sm font-semibold text-gray-700 mt-1">Original: Rs. {item.price}</p>
+                    <p className="text-sm font-semibold text-green-600 mt-0.5">Now: Rs. {item.currentPrice}</p>
+                    <p className="text-sm font-semibold text-red-500 mt-0.5">Discount: {item.discountPercentage}%</p>
+
+                    <p className="text-xs text-gray-500 mt-2 line-clamp-1">
                       {item.description || 'No description available.'}
                     </p>
                   </div>
+
 
                   {/* Action Icons */}
                   <div className="absolute top-2 right-3 flex items-center space-x-2">
@@ -72,9 +77,14 @@ const ListAllBook = () => {
                       <Pencil size={16} />
                     </button></Link>
                     {/* delete button */}
-                    <button onClick={()=>handleDelete(item.id)} className="text-red-500 hover:text-red-700">
+                    <button onClick={() => handleDelete(item.id)} className="text-red-500 hover:text-red-700">
                       <Trash2 size={16} />
                     </button>
+                    <Link to={`/timeDiscount/${item.id}`}>
+                      <button className="text-green-600 hover:text-green-800">
+                        <Percent size={16} />
+                      </button>
+                    </Link>
                   </div>
                 </div>
 

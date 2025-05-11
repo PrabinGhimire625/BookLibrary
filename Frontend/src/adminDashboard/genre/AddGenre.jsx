@@ -1,77 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { addTimeDiscount } from '../../components/store/bookSlice';
 import { toast } from 'react-toastify';
-import { addGenre, resetStatus } from '../../components/store/genreSlice';
-import { STATUS } from '../../components/globals/status/status';
 import Sidebar from '../sidebar/Sidebar';
 
-
-const AddGenre = () => {
-  const dispatch = useDispatch();
+const TimeDiscount = () => {
+  const { bookId } = useParams(); // Get the book ID from the URL
   const navigate = useNavigate();
-  const { status } = useSelector((state) => state.genre);
+  const dispatch = useDispatch();
 
-  const [genreData, setGenreData] = useState({
-    genreName: '',
+  const [discountData, setDiscountData] = useState({
+    discountPercentage: '',
+    discountStartDate: '',
+    discountEndDate: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setGenreData((prev) => ({
+    setDiscountData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleDiscountSubmit = (e) => {
     e.preventDefault();
-    if (!genreData.genreName.trim()) {
-      toast.error('Genre name is required!');
+
+    if (!discountData.discountPercentage || !discountData.discountStartDate || !discountData.discountEndDate) {
+      toast.error('All fields are required!');
       return;
     }
 
     setIsLoading(true);
-    dispatch(addGenre(genreData));
-    if (status === STATUS.SUCCESS) {
-      toast.success('Genre added successfully!');
-      dispatch(resetStatus());
-      setIsLoading(false);
-      navigate('/listGenre');
-    } else if (status === STATUS.ERROR) {
-      toast.error('Failed to add genre.');
-      dispatch(resetStatus());
-      setIsLoading(false);
-    }
+    dispatch(addTimeDiscount(bookId, discountData));
+    setIsLoading(false);
+    toast.success('Discount added successfully!');
+    navigate('/'); // Redirect to the book list or previous page
   };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
-      {/* Sidebar */}
       <Sidebar />
       <div className="w-full p-4 sm:p-6 md:p-8 flex justify-center h-[400px]">
         <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-6 sm:p-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
-            🗂️ Add New Genre
+            ⏳ Set Time Discount
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleDiscountSubmit} className="space-y-6">
             <Input
-              name="genreName"
-              label="Genre Name"
-              value={genreData.genreName}
+              name="discountPercentage"
+              label="Discount Percentage"
+              value={discountData.discountPercentage}
               onChange={handleChange}
+              type="number"
+              required
+            />
+            <Input
+              name="discountStartDate"
+              label="Start Date (UTC)"
+              value={discountData.discountStartDate}
+              onChange={handleChange}
+              type="datetime-local"
+              required
+            />
+            <Input
+              name="discountEndDate"
+              label="End Date (UTC)"
+              value={discountData.discountEndDate}
+              onChange={handleChange}
+              type="datetime-local"
               required
             />
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={isLoading} 
+                disabled={isLoading}
                 className={`bg-black text-white py-3 px-8 rounded-lg hover:bg-gray-800 transition-all duration-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
               >
-                {isLoading ? 'Adding...' : 'Add Genre'}
+                {isLoading ? 'Adding...' : 'Add Discount'}
               </button>
             </div>
           </form>
@@ -99,4 +109,4 @@ const Input = ({ name, type = 'text', label, value, onChange, required = false }
   </div>
 );
 
-export default AddGenre;
+export default TimeDiscount;

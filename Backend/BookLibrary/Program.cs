@@ -20,6 +20,8 @@ builder.Services.AddDbContext<DatabaseConnection>(options =>
 
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddHostedService<BannerCleanupService>();
+builder.Services.AddHostedService<DiscountCleanupService>();
+
 
 // JWT Authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -86,6 +88,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+
 
 if (app.Environment.IsDevelopment())
 {

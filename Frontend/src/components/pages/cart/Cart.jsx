@@ -32,13 +32,22 @@ const Cart = () => {
     dispatch(updateCartItem(bookId, currentQty + 1))
   }
 
+  const getCurrentPrice = (book) => {
+    if (!book) return 0
+    const { price, isOnSale, discountPercentage } = book
+    if (isOnSale && discountPercentage > 0) {
+      return price - (price * discountPercentage) / 100
+    }
+    return price
+  }
+
   const totalQuantity = cart.reduce((sum, item) => sum + (item.totalItems || 0), 0)
   const subtotal = cart.reduce(
-    (sum, item) => sum + (item.book?.price || 0) * (item.totalItems || 1),
+    (sum, item) => sum + getCurrentPrice(item.book) * (item.totalItems || 1),
     0
   )
   const shipping = cart.length > 0 ? 100 : 0
-  const total = subtotal
+  const total = subtotal + shipping
 
   return (
     <>
@@ -88,13 +97,27 @@ const Cart = () => {
                         </div>
 
                         {/* Price and Delete */}
-                        <div className="flex items-center space-x-4">
-                          <p className="font-semibold text-gray-700">
-                            Rs. {(item.book?.price || 0).toFixed(2)}
-                          </p>
+                        <div className="text-right space-y-1">
+                          {item.book?.isOnSale ? (
+                            <>
+                              <p className="text-sm text-gray-400 line-through">
+                                Rs. {item.book?.price.toFixed(2)}
+                              </p>
+                              <p className="font-semibold text-green-600">
+                                Rs. {getCurrentPrice(item.book).toFixed(2)}
+                              </p>
+                              <p className="text-xs text-green-700">
+                                You save {item.book.discountPercentage}%
+                              </p>
+                            </>
+                          ) : (
+                            <p className="font-semibold text-gray-700">
+                              Rs. {item.book?.price.toFixed(2)}
+                            </p>
+                          )}
                           <button
                             onClick={() => handleDelete(item.book?.id)}
-                            className="text-red-500 hover:text-red-700 transition"
+                            className="text-red-500 hover:text-red-700 transition block"
                             title="Remove item"
                           >
                             ✕
@@ -124,14 +147,10 @@ const Cart = () => {
                   <span>Subtotal</span>
                   <span>Rs. {subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span>Rs. {shipping}</span>
-                </div>
                 <hr className="border-gray-300" />
                 <div className="flex justify-between font-semibold text-gray-800">
                   <span>Total</span>
-                  <span>Rs. {total.toFixed(2)}</span>
+                  <span>Rs. {subtotal.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -144,7 +163,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   )
 }

@@ -150,7 +150,7 @@ export function updateBook({ id, bookData }) {
 
 // Search books by title, ISBN, description, genre, or category
 export function searchBookDetails(query) {
-    return async function search(dispatch) {
+    return async function searchBookDetailsTHunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
             const response = await APIAuthenticated.get(`/api/book/search?query=${query}`);
@@ -165,4 +165,23 @@ export function searchBookDetails(query) {
             dispatch(setStatus(STATUS.ERROR));
         }
     };
+}
+
+//addd the discount for the certain time
+export function addTimeDiscount(bookId, discountData) {
+  return async function addTimeDiscountThunk(dispatch) {
+    dispatch(setStatus(STATUS.LOADING));
+    try {
+      const response = await APIAuthenticated.patch(`/api/book/update-discount/${bookId}`, discountData);
+      if (response.status === 200) {
+        dispatch(setStatus(STATUS.SUCCESS));
+        dispatch(listAllBook());
+      } else {
+        dispatch(setStatus(STATUS.ERROR));
+      }
+    } catch (err) {
+      console.error("Error updating discount:", err);
+      dispatch(setStatus(STATUS.ERROR));
+    }
+  };
 }

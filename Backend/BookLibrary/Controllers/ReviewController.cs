@@ -166,6 +166,10 @@ namespace BookLibrary.Controllers
                         description = book.Description,
                         coverImage = book.CoverImage,
                         stock = book.Stock,
+                        currentPrice = book.GetCurrentPrice(),
+                        discountPercentage = book.DiscountPercentage,
+                        discountStartDate = book.DiscountStartDate,
+                        discountEndDate = book.DiscountEndDate,
                         averageRating = db.Reviews
                             .Where(r => r.BookId == book.Id)
                             .Average(r => (double?)r.Rating) ?? 0.0,
@@ -206,6 +210,10 @@ namespace BookLibrary.Controllers
                         description = book.Description,
                         coverImage = book.CoverImage,
                         stock = book.Stock,
+                        currentPrice = book.GetCurrentPrice(),
+                        discountPercentage = book.DiscountPercentage,
+                        discountStartDate = book.DiscountStartDate,
+                        discountEndDate = book.DiscountEndDate,
                         averageRating = db.Reviews
                             .Where(r => r.BookId == book.Id)
                             .Average(r => (double?)r.Rating) ?? 0.0,
@@ -248,6 +256,10 @@ namespace BookLibrary.Controllers
                         description = book.Description,
                         coverImage = book.CoverImage,
                         stock = book.Stock,
+                        currentPrice = book.GetCurrentPrice(),
+                        discountPercentage = book.DiscountPercentage,
+                        discountStartDate = book.DiscountStartDate, 
+                        discountEndDate = book.DiscountEndDate,  
                         averageRating = db.Reviews
                             .Where(r => r.BookId == book.Id)
                             .Average(r => (double?)r.Rating) ?? 0.0,
@@ -290,6 +302,10 @@ namespace BookLibrary.Controllers
                         description = book.Description,
                         coverImage = book.CoverImage,
                         stock = book.Stock,
+                        currentPrice = book.GetCurrentPrice(),
+                        discountPercentage = book.DiscountPercentage,
+                        discountStartDate = book.DiscountStartDate, 
+                        discountEndDate = book.DiscountEndDate,  
                         averageRating = db.Reviews
                             .Where(r => r.BookId == book.Id)
                             .Average(r => (double?)r.Rating) ?? 0.0,
@@ -328,6 +344,10 @@ namespace BookLibrary.Controllers
                         description = book.Description,
                         coverImage = book.CoverImage,
                         stock = book.Stock,
+                        currentPrice = book.GetCurrentPrice(),
+                        discountPercentage = book.DiscountPercentage,
+                        discountStartDate = book.DiscountStartDate, 
+                        discountEndDate = book.DiscountEndDate,  
                         averageRating = db.Reviews
                             .Where(r => r.BookId == book.Id)
                             .Average(r => (double?)r.Rating) ?? 0.0,
@@ -335,7 +355,7 @@ namespace BookLibrary.Controllers
                             .Count(r => r.BookId == book.Id)
                     })
                     .OrderByDescending(b => b.averageRating)
-                    .ThenByDescending(b => b.totalReviews) 
+                    .ThenByDescending(b => b.totalReviews)
                     .Take(5)
                     .ToListAsync();
 

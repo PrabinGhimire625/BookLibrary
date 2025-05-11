@@ -39,6 +39,7 @@ import AdminProfile from './adminDashboard/profile/AdminProfile';
 import UserList from './adminDashboard/List/UserList';
 import OrderList from './adminDashboard/List/OrderList';
 import Search from './components/pages/search/Search';
+import TimeDiscount from './adminDashboard/Book/TimeDiscount';
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
           <Route path="/listAnnouncement" element={<ProtectedRoute element={ListAnnouncement} allowedRoles={['Admin']} />} />
           <Route path="/userList" element={<ProtectedRoute element={UserList} allowedRoles={['Admin']} />} />
           <Route path="/orderList" element={<ProtectedRoute element={OrderList} allowedRoles={['Admin', 'Staff']} />} />
+          <Route path="/timeDiscount/:bookId" element={<ProtectedRoute element={TimeDiscount} allowedRoles={['Admin']} />} />
 
           {/* Staff Routes */}
           <Route path="/staffDashboard" element={<ProtectedRoute element={StaffDashboard} allowedRoles={['Staff', 'Admin']} />} />

@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-
 public class Book
 {
     [Key]
@@ -17,9 +16,6 @@ public class Book
     [Required(ErrorMessage = "Author is required")]
     [MaxLength(100, ErrorMessage = "Author must be less than 100 characters")]
     public string Author { get; set; }
-
-    [Required]
-    public bool IsOnSale { get; set; } = false;
 
     public DateTime AddedDate { get; set; } = DateTime.UtcNow;
 
@@ -47,9 +43,38 @@ public class Book
     [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
     public int Stock { get; set; }
 
+    [Required]
+    public bool IsOnSale { get; set; } = false;
+
+    [Range(0, 100, ErrorMessage = "The discount should be between 0% and 100%")]
+    public decimal? DiscountPercentage { get; set; }
+
+    [DataType(DataType.Date, ErrorMessage = "The start date format is not valid")]
+    public DateTime? DiscountStartDate { get; set; }
+
+    [DataType(DataType.Date, ErrorMessage = "The end date format is not valid")]
+    public DateTime? DiscountEndDate { get; set; }
+
+    // Computed Discounted Price
+    public decimal GetCurrentPrice()
+    {
+        if (IsOnSale && DiscountPercentage.HasValue &&
+            DiscountStartDate.HasValue && DiscountEndDate.HasValue)
+        {
+            var now = DateTime.UtcNow;
+            if (now >= DiscountStartDate && now <= DiscountEndDate)
+            {
+                return Price - (Price * (DiscountPercentage.Value / 100));
+            }
+        }
+
+        return Price; // No discount
+    }
+
     public Book()
     {
         AddedDate = DateTime.UtcNow;
         PublicationDate = DateTime.UtcNow;
     }
 }
+

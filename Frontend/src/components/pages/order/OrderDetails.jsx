@@ -33,6 +33,8 @@ const OrderDetails = () => {
     }
   };
 
+  console.log("SIngle order", singleOrder)
+
   const totalAmount =
     singleOrder?.items?.reduce(
       (acc, item) => acc + item.pricePerUnit * item.quantity,
@@ -112,7 +114,6 @@ const OrderDetails = () => {
 
         {/* Summary & Actions */}
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left: Summary */}
           <div className="bg-white shadow rounded-lg p-6 flex-1">
             <h2 className="text-xl font-semibold mb-4">Order Info</h2>
             <div className="space-y-4">
@@ -122,7 +123,7 @@ const OrderDetails = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Total (Estimate)</span>
-                <span className="font-semibold">Rs. {totalAmount}</span>
+                <span className="font-semibold">Rs. {singleOrder?.totalPrice}</span>
               </div>
             </div>
           </div>

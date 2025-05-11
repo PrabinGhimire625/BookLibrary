@@ -67,7 +67,7 @@ const SingleBook = () => {
 
     const handleAddToCart = async () => {
         if (id && singleBook) {
-            await dispatch(addToCart(id, quantity ));
+            await dispatch(addToCart(id, quantity));
             if (status === STATUS.SUCCESS) {
                 toast.success("Book successfully added to cart!");
             } else if (status === STATUS.ERROR) {
@@ -120,48 +120,68 @@ const SingleBook = () => {
                         </div>
 
                         {/* Right: Book Info */}
-                        <div className="flex flex-col justify-between">
-                            <div>
-                                <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-2">{singleBook.title}</h1>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+                        <div className="flex flex-col justify-between space-y-6">
+                            <div className="space-y-3">
+                                <h1 className="text-4xl font-bold text-gray-900">{singleBook.title}</h1>
+
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded-full font-medium">
                                         Genre: {singleBook.genre}
                                     </span>
-                                    <span className="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">
+                                    <span className="inline-block bg-purple-100 text-purple-700 px-3 py-1 text-sm rounded-full font-medium">
                                         Category: {singleBook.category}
                                     </span>
                                 </div>
 
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-3xl font-semibold text-indigo-600">${singleBook.price}</span>
-                                    {singleBook.isOnSale && (
-                                        <span className="text-xs text-green-600 bg-green-100 px-3 py-1 rounded-full font-medium">
-                                            On Sale
-                                        </span>
+                                <div className="flex items-center gap-4">
+                                    {singleBook.isOnSale ? (
+                                        <>
+                                            <span className="text-2xl font-bold text-red-600">
+                                            Rs.{singleBook.currentPrice}
+                                            </span>
+                                            <span className="line-through text-gray-400">Rs.{singleBook.price}</span>
+
+                                            {/* Discount Badge */}
+                                            <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-md font-semibold">
+                                                -{Math.round(
+                                                    100 - ((singleBook.discountedPrice ?? (singleBook.price * 0.8)) / singleBook.price) * 100
+                                                )}%
+                                            </span>
+
+                                            <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-md font-medium">
+                                                On Sale
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="text-2xl font-semibold text-gray-800">${singleBook.price}</span>
                                     )}
                                 </div>
 
-                                <div className="text-sm text-gray-700 space-y-2 mb-6 leading-relaxed">
-                                    <p><span className="font-semibold">Author:</span> {singleBook.author}</p>
-                                    <p><span className="font-semibold">ISBN:</span> {singleBook.isbn}</p>
-                                    <p><span className="font-semibold">Published on:</span> {new Date(singleBook.publicationDate).toLocaleDateString()}</p>
+
+                                <hr className="my-4 border-gray-200" />
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 text-sm text-gray-700">
+                                    <p><span className="font-medium text-gray-900">Author:</span> {singleBook.author}</p>
+                                    <p><span className="font-medium text-gray-900">ISBN:</span> {singleBook.isbn}</p>
+                                    <p><span className="font-medium text-gray-900">Published:</span> {new Date(singleBook.publicationDate).toLocaleDateString()}</p>
+                                    <p><span className="font-medium text-gray-900">Stock:</span> {singleBook.stock}</p>
                                 </div>
 
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Description</h3>
-                                    <p className="text-sm text-gray-600 leading-relaxed">{singleBook.description}</p>
+                                <div className="pt-4">
+                                    <h3 className="text-md font-semibold text-gray-800 mb-1">Description</h3>
+                                    <p className="text-sm text-gray-600 leading-relaxed border rounded-md p-3 bg-gray-50">{singleBook.description}</p>
                                 </div>
 
-                                <div className="mb-6">
+                                <div className="pt-4">
                                     <h3 className="text-md font-semibold text-gray-800 mb-1">Quantity</h3>
-                                    <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg">
-                                        <button onClick={decreaseQty} className="p-1 hover:text-red-500">
+                                    <div className="flex items-center gap-3 w-fit bg-gray-100 px-4 py-2 rounded-full">
+                                        <button onClick={decreaseQty} className="text-gray-700 hover:text-red-500">
                                             <FaMinus />
                                         </button>
-                                        <span className="px-2 font-medium text-lg">{quantity}</span>
+                                        <span className="text-lg font-medium">{quantity}</span>
                                         <button
                                             onClick={increaseQty}
-                                            className={`p-1 ${quantity >= singleBook.stock ? 'text-gray-400 cursor-not-allowed' : 'hover:text-green-500'}`}
+                                            className={`text-gray-700 ${quantity >= singleBook.stock ? 'text-gray-400 cursor-not-allowed' : 'hover:text-green-600'}`}
                                             disabled={quantity >= singleBook.stock}
                                         >
                                             <FaPlus />
@@ -169,21 +189,22 @@ const SingleBook = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-3 pt-2">
                                     <button
                                         onClick={handleAddToCart}
-                                        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm rounded-lg shadow-md transition"
+                                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition"
                                     >
                                         <FaShoppingCart /> Add to Cart
                                     </button>
                                     <button
-                                        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 text-sm rounded-lg shadow-md transition"
+                                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow transition"
                                     >
                                         <FaMoneyBillWave /> Buy Now
                                     </button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     {/* Reviews Section */}
@@ -209,7 +230,7 @@ const SingleBook = () => {
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 };
