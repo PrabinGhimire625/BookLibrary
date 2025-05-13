@@ -51,7 +51,7 @@ const ListAllBook = () => {
                   <img
                     src={item.coverImage}
                     alt={item.title}
-                    className="h-28 w-full object-cover rounded-l-md"
+                    className="h-28 w-full object-contain rounded-l-md"
                   />
                 </div>
 

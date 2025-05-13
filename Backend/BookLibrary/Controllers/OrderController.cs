@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 using BookLibrary.DTOs.Request;
+using BookLibrary.Services.Email;
 
 namespace BookLibrary.Controllers
 {
@@ -17,10 +18,12 @@ namespace BookLibrary.Controllers
     {
         private readonly DatabaseConnection db;
         private readonly ILogger<OrderController> _logger;
+        private readonly EmailService emailService;
 
-        public OrderController(DatabaseConnection db, ILogger<OrderController> logger)
+        public OrderController(DatabaseConnection db, ILogger<OrderController> logger, EmailService emailService)
         {
             this.db = db;
+            this.emailService = emailService;
             _logger = logger;
         }
 
@@ -29,14 +32,12 @@ namespace BookLibrary.Controllers
         [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> PlaceOrder([FromBody] Order order)
         {
-            // Ensure Order and OrderItems are not null or empty
             if (order == null || order.OrderItems == null || !order.OrderItems.Any())
             {
                 _logger.LogWarning("Order is null or empty.");
                 return BadRequest("Order must contain at least one item.");
             }
 
-            // Ensure phone number and shipping address are provided
             if (string.IsNullOrWhiteSpace(order.PhoneNumber) || string.IsNullOrWhiteSpace(order.ShippingAddress))
             {
                 _logger.LogWarning("Phone number or shipping address is missing.");
@@ -52,11 +53,8 @@ namespace BookLibrary.Controllers
 
             order.UserId = Guid.Parse(userId);
 
-            // Validate that each BookId in OrderItems exists in Books table
             foreach (var orderItem in order.OrderItems)
             {
-                _logger.LogInformation("Checking if Book with ID {BookId} exists in database.", orderItem.BookId);
-
                 var bookExists = await db.Books.AnyAsync(b => b.Id == orderItem.BookId);
                 if (!bookExists)
                 {
@@ -65,70 +63,48 @@ namespace BookLibrary.Controllers
                 }
             }
 
-            // Calculate total price and quantities
             decimal totalPrice = order.OrderItems.Sum(item => item.UnitPrice * item.Quantity);
             int totalBooks = order.OrderItems.Sum(item => item.Quantity);
             decimal discountPercent = 0;
 
-            // Apply 5% discount if total books >= 5
             if (totalBooks >= 5)
             {
                 discountPercent += 5;
                 _logger.LogInformation("Applied 5% discount for ordering {TotalBooks} books.", totalBooks);
             }
 
-            // Check how many successful orders the user has
             int successfulOrders = await db.Orders.CountAsync(o =>
                 o.UserId == order.UserId && o.OrderStatus == OrderStatus.Delivered);
 
-            // Apply additional 10% discount if user has 10 or more successful orders
             if (successfulOrders >= 10)
             {
                 discountPercent += 10;
                 _logger.LogInformation("Applied 10% loyalty discount for {SuccessfulOrders} successful orders.", successfulOrders);
             }
 
-            // Final total after discounts
             decimal discountedTotal = totalPrice - (totalPrice * discountPercent / 100);
             order.TotalPrice = Math.Round(discountedTotal, 2);
             order.DiscountPercent = discountPercent;
-
-            // Set order meta
             order.OrderStatus = OrderStatus.Pending;
-            order.ClaimCode = Guid.NewGuid().ToString("N")[..8].ToUpper(); // Safe & uppercase
-                                                                           //send to the register email  
+            order.ClaimCode = Guid.NewGuid().ToString("N")[..8].ToUpper();
             order.OrderDate = DateTime.UtcNow;
 
-            var orderItems = order.OrderItems.ToList(); // Detach and save separately
+            var orderItems = order.OrderItems.ToList(); // Detach for later use
             order.OrderItems = null;
 
-            // Save order
             await db.Orders.AddAsync(order);
             await db.SaveChangesAsync();
 
-            // Save order items
             foreach (var item in orderItems)
             {
                 item.OrderItemId = Guid.NewGuid();
                 item.OrderId = order.OrderId;
                 await db.OrderItems.AddAsync(item);
             }
-
             await db.SaveChangesAsync();
 
-            // Check if order saved properly
-            var savedOrder = await db.Orders.AsNoTracking()
-                .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
-
-            if (savedOrder == null)
-            {
-                _logger.LogError("Order save failed for OrderId: {OrderId}", order.OrderId);
-                return StatusCode(500, "Order save failed.");
-            }
-
-            // Remove ordered books from the cart
+            // Remove ordered books from cart
             var bookIds = orderItems.Select(oi => oi.BookId).ToList();
-
             var cartItemsToRemove = await db.Carts
                 .Where(c => c.UserId == order.UserId && bookIds.Contains(c.BookId))
                 .ToListAsync();
@@ -137,22 +113,27 @@ namespace BookLibrary.Controllers
             {
                 db.Carts.RemoveRange(cartItemsToRemove);
                 await db.SaveChangesAsync();
-
                 _logger.LogInformation("Removed {Count} items from cart after order.", cartItemsToRemove.Count);
             }
 
-            _logger.LogInformation("Order placed successfully for OrderId: {OrderId}", savedOrder.OrderId);
+            // Retrieve saved order
+            var savedOrder = await db.Orders.FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+            if (savedOrder == null)
+            {
+                _logger.LogError("Order save failed for OrderId: {OrderId}", order.OrderId);
+                return StatusCode(500, "Order save failed.");
+            }
 
-            // Update the order status to Delivered 
-            savedOrder.OrderStatus = OrderStatus.Delivered;
+            // Set order status to Delivered
+            savedOrder.OrderStatus = OrderStatus.Pending;
             await db.SaveChangesAsync();
 
-            // Save notification once the order is delivered
+            // Add notification
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = savedOrder.UserId,
-                Message = $"Your order #{savedOrder.OrderId} has been pending you will find it soon.",
+                Message = $"Your order #{savedOrder.OrderId} has been pending. You will find it soon.",
                 IsRead = false,
                 CreatedAt = DateTime.UtcNow
             };
@@ -160,11 +141,75 @@ namespace BookLibrary.Controllers
             await db.Notifications.AddAsync(notification);
             await db.SaveChangesAsync();
 
-            _logger.LogInformation("Notification created for user: {UserId} regarding delivered order: {OrderId}", savedOrder.UserId, savedOrder.OrderId);
+            _logger.LogInformation("Notification created for user: {UserId} regarding order: {OrderId}", savedOrder.UserId, savedOrder.OrderId);
+
+            // Send email to user
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (!string.IsNullOrWhiteSpace(userEmail))
+                try
+                {
+                    string subject = "Order Confirmation - BookLibrary";
+                    string body = $@"
+    <div style='font-family:Arial,sans-serif;max-width:600px;margin:auto;border:1px solid #ddd;padding:20px;border-radius:10px;'>
+        <h2 style='color:#4CAF50;'>📚 BookLibrary - Order Confirmation</h2>
+        <p><strong>Hi Member,</strong></p>
+        <p>Thank you for your purchase! Your order has been placed successfully. Below are the details:</p>
+
+        <h3>📄 Order Summary</h3>
+        <p><strong>Order ID:</strong> {savedOrder.OrderId}</p>
+        <p><strong>Claim Code:</strong> {savedOrder.ClaimCode}</p>
+        <p><strong>Status:</strong> {savedOrder.OrderStatus}</p>
+        <p><strong>Order Date:</strong> {savedOrder.OrderDate:dd MMM yyyy}</p>
+
+        <h3>📦 Shipping Info</h3>
+        <p><strong>Phone:</strong> {order.PhoneNumber}</p>
+        <p><strong>Address:</strong> {order.ShippingAddress}</p>
+
+        <h3>🛒 Items Ordered</h3>
+        <table style='width:100%;border-collapse:collapse;'>
+            <thead>
+                <tr style='background:#f2f2f2;'>
+                    <th style='border:1px solid #ddd;padding:8px;text-align:left;'>Book</th>
+                    <th style='border:1px solid #ddd;padding:8px;text-align:right;'>Qty</th>
+                    <th style='border:1px solid #ddd;padding:8px;text-align:right;'>Price</th>
+                </tr>
+            </thead>
+            <tbody>";
+
+                    foreach (var item in orderItems)
+                    {
+                        var book = await db.Books.FindAsync(item.BookId);
+                        body += $@"
+        <tr>
+            <td style='border:1px solid #ddd;padding:8px;'>{book?.Title}</td>
+            <td style='border:1px solid #ddd;padding:8px;text-align:right;'>{item.Quantity}</td>
+            <td style='border:1px solid #ddd;padding:8px;text-align:right;'>Rs.{item.UnitPrice * item.Quantity:F2}</td>
+        </tr>";
+                    }
+
+                    body += $@"
+            </tbody>
+        </table>
+
+        <h3>💰 Billing Summary</h3>
+        <p><strong>Discount Applied:</strong> {discountPercent}%</p>
+        <p><strong>Total:</strong> <span style='color:#4CAF50;font-size:18px;'>Rs.{savedOrder.TotalPrice:F2}</span></p>
+
+        <p style='margin-top:20px;'>If you have any questions, feel free to reply to this email.</p>
+        <p style='color:#888;'>— BookLibrary Team</p>
+    </div>";
+
+                    await emailService.SendEmailAsync(userEmail, subject, body);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send confirmation email for order {OrderId}", savedOrder.OrderId);
+                    // You may choose to continue or return a warning response
+                }
 
             return Ok(new
             {
-                message = "Order placed successfully and notification saved after delivery.",
+                message = "Order placed successfully and notification sent.",
                 orderId = savedOrder.OrderId,
                 claimCode = savedOrder.ClaimCode,
                 status = savedOrder.OrderStatus.ToString(),
@@ -219,7 +264,7 @@ namespace BookLibrary.Controllers
             {
                 OrderId = o.OrderId,
                 OrderDate = o.OrderDate,
-                 TotalPrice = o.TotalPrice.ToString(),
+                TotalPrice = o.TotalPrice.ToString(),
                 Status = o.OrderStatus.ToString(),
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
@@ -267,7 +312,7 @@ namespace BookLibrary.Controllers
             {
                 OrderId = o.OrderId,
                 OrderDate = o.OrderDate,
-                 TotalPrice = o.TotalPrice.ToString(),
+                TotalPrice = o.TotalPrice.ToString(),
                 Status = o.OrderStatus.ToString(),
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
@@ -422,6 +467,38 @@ namespace BookLibrary.Controllers
             return Ok(result);
         }
 
+        // staffy verify the claim code and change the status to delivered
+        [HttpPost("staff/validation/{orderId}/{code}")]
+        [Authorize(Policy = "RequireStaffRole")]
+        public async Task<IActionResult> ValidateClaimCode(Guid orderId, string code)
+        {
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (currentUserId == null)
+                return Unauthorized("User is not logged in.");
+
+            var order = await db.Orders
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+                return NotFound("Order not found.");
+
+            if (order.ClaimCode != code.ToUpper())
+                return BadRequest("Invalid claim code.");
+
+            if (order.OrderStatus == OrderStatus.Delivered)
+                return BadRequest("Order already delivered.");
+
+            order.OrderStatus = OrderStatus.Delivered;
+            await db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Claim code validated successfully by staff.",
+                orderId = order.OrderId,
+                status = order.OrderStatus.ToString()
+            });
+        }
+        
     }
 }

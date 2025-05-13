@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BookLibrary.Middlewares;
 using BookLibrary.Services;
+using BookLibrary.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,9 @@ builder.Services.AddDbContext<DatabaseConnection>(options =>
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddHostedService<BannerCleanupService>();
 builder.Services.AddHostedService<DiscountCleanupService>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
+builder.Services.AddScoped<EmailService>();
 
 // JWT Authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

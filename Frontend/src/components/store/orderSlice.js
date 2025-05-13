@@ -13,6 +13,7 @@ const orderSlice = createSlice({
     deliveredOrders: [],
     cancelOrder:[],
     allOrders: [],
+    changeStatus:null,
     status: STATUS.LOADING,
   },
   reducers: {
@@ -39,6 +40,9 @@ const orderSlice = createSlice({
     },
     setAllOrders(state, action) {
       state.allOrders = action.payload;
+    },
+    setVerifyChangeStatus(state, action) {
+      state.changeStatus = action.payload;
     },
     setStatus(state, action) {
       state.status = action.payload;
@@ -74,7 +78,7 @@ export const {
   resetStatus,
   setDeleteOrder,
   resetOrderState,
-  setSingleOrder, setCancelOrder
+  setSingleOrder, setCancelOrder, setVerifyChangeStatus
 } = orderSlice.actions;
 
 export default orderSlice.reducer;
@@ -164,17 +168,13 @@ export function cancelOrder(orderId) {
         const response = await APIAuthenticated.patch(`/api/order/cancel/${orderId}`);
         if (response.status === 200) {
           dispatch(setStatus(STATUS.SUCCESS));
-        //   dispatch(setDeleteOrder({ orderId }));
-          // Optionally: toast.success("Order cancelled successfully!");
         } else {
           dispatch(setStatus(STATUS.ERROR));
-          // Optionally: toast.error("Failed to cancel order.");
         }
       } catch (err) {
         const message = err.response?.data?.message || "Something went wrong!";
         console.error("Error canceling order:", message);
         dispatch(setStatus(STATUS.ERROR));
-        // Optionally: toast.error(message);
       }
     };
   }
@@ -196,7 +196,6 @@ export function fetchCancelledOrder() {
         const message = err.response?.data?.message || "Something went wrong!";
         console.error("Error canceling order:", message);
         dispatch(setStatus(STATUS.ERROR));
-        // Optionally: toast.error(message);
       }
     };
   }
@@ -211,17 +210,31 @@ export function fetchCancelledOrder() {
         if (response.status === 200) {
           dispatch(setStatus(STATUS.SUCCESS));
           dispatch(setSingleOrder(response.data));
-          // Optionally: toast.success("Order cancelled successfully!");
         } else {
           dispatch(setStatus(STATUS.ERROR));
-          // Optionally: toast.error("Failed to cancel order.");
         }
       } catch (err) {
         const message = err.response?.data?.message || "Something went wrong!";
         console.error("Error canceling order:", message);
         dispatch(setStatus(STATUS.ERROR));
-        // Optionally: toast.error(message);
       }
     };
   }
   
+  // staff verify and change the status
+export function staffVerifyAndChangeStatus(orderId, code) {
+  return async function staffVerifyAndChangeStatusThunk(dispatch) {
+    dispatch(setStatus(STATUS.LOADING));
+    try {
+      const response = await APIAuthenticated.post(`/api/order/staff/validation/${orderId}/${code}`);
+      if (response.status === 200) {
+        dispatch(setStatus(STATUS.SUCCESS));
+      } else {
+        dispatch(setStatus(STATUS.ERROR));
+      }
+    } catch (err) {
+      dispatch(setStatus(STATUS.ERROR));
+      console.error("Claim verification error:", err);
+    }
+  };
+}

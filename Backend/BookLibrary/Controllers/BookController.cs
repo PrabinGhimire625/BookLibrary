@@ -50,13 +50,13 @@ namespace BookLibrary.Controllers
         }
 
 
-        // Get all the books
         [HttpGet("getAllBook")]
         public async Task<IActionResult> GetAllBooks()
         {
-            var books = await db.Books.ToListAsync();
+            var books = await db.Books
+                .OrderByDescending(book => book.AddedDate) // 🔽 Sort by latest added date
+                .ToListAsync();
 
-            // Map each book to include computed properties like currentPrice, etc.
             var bookResponses = books.Select(book => new
             {
                 book.Id,

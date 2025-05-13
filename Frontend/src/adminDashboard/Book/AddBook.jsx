@@ -125,7 +125,7 @@ const AddBook = () => {
               <Input name="title" label="Book Title" value={bookData.title} onChange={handleChange} required />
               <Input name="isbn" label="ISBN" value={bookData.isbn} onChange={handleChange} required />
               <Input name="author" label="Author" value={bookData.author} onChange={handleChange} required />
-              <Input name="price" type="number" label="Price ($)" value={bookData.price} onChange={handleChange} requiredmin="0" />
+              <Input name="price" type="number" label="Price (Rs)" value={bookData.price} onChange={handleChange} requiredmin="0" />
 
               <Input name="addedDate" type="date" label="Added Date" value={bookData.addedDate} onChange={handleChange} required />
               <Input name="publicationDate" type="date" label="Publication Date" value={bookData.publicationDate} onChange={handleChange} required />

@@ -30,7 +30,7 @@ const HistoricalBook = () => {
               <img
                 src={book.coverImage}
                 alt={book.title}
-                className="w-28 h-32 object-cover rounded mb-4"
+                className="w-28 h-32 object-contain rounded mb-4"
               />
               <div className="text-center space-y-1 w-full">
                 <h3 className="text-sm font-semibold text-indigo-900 truncate">

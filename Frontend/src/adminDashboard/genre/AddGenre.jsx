@@ -1,87 +1,79 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { addTimeDiscount } from '../../components/store/bookSlice';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { addGenre, resetStatus } from '../../components/store/genreSlice';
+import { STATUS } from '../../components/globals/status/status';
 import Sidebar from '../sidebar/Sidebar';
 
-const TimeDiscount = () => {
-  const { bookId } = useParams(); // Get the book ID from the URL
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const [discountData, setDiscountData] = useState({
-    discountPercentage: '',
-    discountStartDate: '',
-    discountEndDate: ''
+const AddGenre = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { status } = useSelector((state) => state.genre);
+
+  const [genreData, setGenreData] = useState({
+    genreName: '',
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setDiscountData((prev) => ({
+    setGenreData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleDiscountSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!discountData.discountPercentage || !discountData.discountStartDate || !discountData.discountEndDate) {
-      toast.error('All fields are required!');
+    if (!genreData.genreName.trim()) {
+      toast.error('Genre name is required!');
       return;
     }
 
-    setIsLoading(true);
-    dispatch(addTimeDiscount(bookId, discountData));
-    setIsLoading(false);
-    toast.success('Discount added successfully!');
-    navigate('/'); // Redirect to the book list or previous page
+    setIsLoading(true); // Set loading state when form is submitted
+    dispatch(addGenre(genreData));
+    if (status === STATUS.SUCCESS) {
+        toast.success('Genre added successfully!');
+        dispatch(resetStatus());
+        setIsLoading(false); // Reset loading state
+        navigate('/listGenre');
+      } else if (status === STATUS.ERROR) {
+        toast.error('Failed to add genre.');
+        dispatch(resetStatus());
+        setIsLoading(false); // Reset loading state
+      }
   };
-
-  return (
+ return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      {/* Sidebar */}
       <Sidebar />
+
+      {/* Content Area aligned from top left */}
       <div className="w-full p-4 sm:p-6 md:p-8 flex justify-center h-[400px]">
         <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-6 sm:p-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
-            ⏳ Set Time Discount
+            🗂 Add New Genre
           </h2>
-          <form onSubmit={handleDiscountSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <Input
-              name="discountPercentage"
-              label="Discount Percentage"
-              value={discountData.discountPercentage}
+              name="genreName"
+              label="Genre Name"
+              value={genreData.genreName}
               onChange={handleChange}
-              type="number"
-              required
-            />
-            <Input
-              name="discountStartDate"
-              label="Start Date (UTC)"
-              value={discountData.discountStartDate}
-              onChange={handleChange}
-              type="datetime-local"
-              required
-            />
-            <Input
-              name="discountEndDate"
-              label="End Date (UTC)"
-              value={discountData.discountEndDate}
-              onChange={handleChange}
-              type="datetime-local"
               required
             />
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`bg-black text-white py-3 px-8 rounded-lg hover:bg-gray-800 transition-all duration-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                disabled={isLoading} // Disable the button during loading state
+                className={`bg-black text-white py-3 px-8 rounded-lg hover:bg-gray-800 transition-all duration-200 ${
+                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
-                {isLoading ? 'Adding...' : 'Add Discount'}
+                {isLoading ? 'Adding...' : 'Add Genre'}
               </button>
             </div>
           </form>
@@ -109,4 +101,4 @@ const Input = ({ name, type = 'text', label, value, onChange, required = false }
   </div>
 );
 
-export default TimeDiscount;
+export default AddGenre;

@@ -91,76 +91,67 @@ const SingleBook = () => {
             <Navbar />
             <div className="pt-16 px-4 md:px-8 max-w-screen-xl mx-auto">
                 <div className="bg-white min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 relative">
+                    <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 py-10 px-6 relative">
                         {/* Left: Book Image */}
-                        <div className="relative flex justify-center mb-6 md:mb-0">
-                            <div className="bg-gray-100 p-4 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:scale-105">
+                        <div className="relative flex justify-center items-center">
+                            <div className="bg-white p-4 rounded-2xl shadow-xl hover:shadow-2xl transition-transform transform hover:scale-105 flex justify-center">
                                 <img
                                     src={singleBook.coverImage}
                                     alt={singleBook.title}
-                                    className="w-full object-cover rounded-lg"
+                                    className="w-[300px] object-cover rounded-xl"
                                 />
                             </div>
-
                             {/* Wishlist Button */}
                             <button
                                 aria-label="Add to wishlist"
                                 title="Add to wishlist"
-                                className="absolute top-2 right-2 border border-gray-300 text-gray-700 bg-white rounded-full p-2 hover:bg-gray-100 transition shadow-sm"
+                                className="absolute top-4 right-4 border border-gray-300 text-gray-700 bg-white rounded-full p-2 hover:bg-gray-100 transition shadow-sm"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleAddToWhitelist();
                                 }}
                             >
                                 <Bookmark
-                                    size={18}
-                                    className={`hover:text-indigo-600 ${isInWhiteList ? 'text-red-500' : 'text-gray-500'}`}
+                                    size={20}
+                                    className={`transition ${isInWhiteList ? 'text-red-500' : 'text-gray-500'} hover:text-indigo-600`}
                                 />
                             </button>
                         </div>
 
                         {/* Right: Book Info */}
                         <div className="flex flex-col justify-between space-y-6">
-                            <div className="space-y-3">
-                                <h1 className="text-4xl font-bold text-gray-900">{singleBook.title}</h1>
+                            <div className="space-y-4">
+                                <h1 className="text-5xl font-extrabold text-gray-900 leading-tight">{singleBook.title}</h1>
 
-                                <div className="flex flex-wrap gap-2">
-                                    <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded-full font-medium">
+                                <div className="flex flex-wrap gap-3">
+                                    <span className="bg-blue-100 text-blue-700 px-4 py-1 text-sm rounded-full font-semibold">
                                         Genre: {singleBook.genre}
                                     </span>
-                                    <span className="inline-block bg-purple-100 text-purple-700 px-3 py-1 text-sm rounded-full font-medium">
+                                    <span className="bg-purple-100 text-purple-700 px-4 py-1 text-sm rounded-full font-semibold">
                                         Category: {singleBook.category}
                                     </span>
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 text-2xl font-bold">
                                     {singleBook.isOnSale ? (
                                         <>
-                                            <span className="text-2xl font-bold text-red-600">
-                                            Rs.{singleBook.currentPrice}
-                                            </span>
-                                            <span className="line-through text-gray-400">Rs.{singleBook.price}</span>
-
-                                            {/* Discount Badge */}
+                                            <span className="text-red-600">Rs.{singleBook.currentPrice}</span>
+                                            <span className="line-through text-gray-400 text-xl">Rs.{singleBook.price}</span>
                                             <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-md font-semibold">
-                                                -{Math.round(
-                                                    100 - ((singleBook.discountedPrice ?? (singleBook.price * 0.8)) / singleBook.price) * 100
-                                                )}%
+                                                -{Math.round(100 - ((singleBook.discountedPrice ?? (singleBook.price * 0.8)) / singleBook.price) * 100)}%
                                             </span>
-
-                                            <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-md font-medium">
+                                            <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-md font-semibold">
                                                 On Sale
                                             </span>
                                         </>
                                     ) : (
-                                        <span className="text-2xl font-semibold text-gray-800">${singleBook.price}</span>
+                                        <span className="text-gray-800">Rs.{singleBook.price}</span>
                                     )}
                                 </div>
 
+                                <hr className="my-4 border-gray-300" />
 
-                                <hr className="my-4 border-gray-200" />
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 text-sm text-gray-700">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-gray-700 text-sm">
                                     <p><span className="font-medium text-gray-900">Author:</span> {singleBook.author}</p>
                                     <p><span className="font-medium text-gray-900">ISBN:</span> {singleBook.isbn}</p>
                                     <p><span className="font-medium text-gray-900">Published:</span> {new Date(singleBook.publicationDate).toLocaleDateString()}</p>
@@ -168,13 +159,15 @@ const SingleBook = () => {
                                 </div>
 
                                 <div className="pt-4">
-                                    <h3 className="text-md font-semibold text-gray-800 mb-1">Description</h3>
-                                    <p className="text-sm text-gray-600 leading-relaxed border rounded-md p-3 bg-gray-50">{singleBook.description}</p>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Description</h3>
+                                    <p className="text-sm text-gray-600 leading-relaxed border border-gray-200 rounded-lg p-4 bg-gray-50">
+                                        {singleBook.description}
+                                    </p>
                                 </div>
 
                                 <div className="pt-4">
-                                    <h3 className="text-md font-semibold text-gray-800 mb-1">Quantity</h3>
-                                    <div className="flex items-center gap-3 w-fit bg-gray-100 px-4 py-2 rounded-full">
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Quantity</h3>
+                                    <div className="flex items-center gap-4 bg-gray-100 px-5 py-2 rounded-full w-fit">
                                         <button onClick={decreaseQty} className="text-gray-700 hover:text-red-500">
                                             <FaMinus />
                                         </button>
@@ -189,23 +182,23 @@ const SingleBook = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-3 pt-2">
+                                <div className="flex flex-wrap gap-4 pt-4">
                                     <button
                                         onClick={handleAddToCart}
-                                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition"
+                                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-xl shadow-md transition"
                                     >
                                         <FaShoppingCart /> Add to Cart
                                     </button>
                                     <button
-                                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow transition"
+                                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl shadow-md transition"
                                     >
                                         <FaMoneyBillWave /> Buy Now
                                     </button>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
 
                     {/* Reviews Section */}
                     <div className="mt-8 max-w-4xl mx-auto px-4">
