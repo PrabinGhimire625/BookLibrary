@@ -23,7 +23,7 @@ namespace BookLibrary.Controllers
             _logger = logger;
         }
 
-        // CREATE the announcement
+        // Create the announcement
         [HttpPost("create")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Create([FromBody] BannerAnnouncement model)
@@ -62,7 +62,7 @@ namespace BookLibrary.Controllers
             }
         }
 
-        // GET active announcement
+        // get active announcement
         [HttpGet("getActiveAnnouncement")]
         public async Task<IActionResult> GetActive()
         {
@@ -82,7 +82,7 @@ namespace BookLibrary.Controllers
             }
         }
 
-        // GET ALL
+        // Get all announcement
         [HttpGet("getAllAnnouncement")]
         public async Task<IActionResult> GetAll()
         {
@@ -97,7 +97,7 @@ namespace BookLibrary.Controllers
             }
         }
 
-        // GET SINGLE
+        // get the single announcement details
         [HttpGet("singleAnnouncement/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -115,7 +115,7 @@ namespace BookLibrary.Controllers
             }
         }
 
-        // UPDATE
+        // Udate the announcement details
         [HttpPatch("update/{id}")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Update(Guid id, [FromBody] BannerAnnouncement model)
@@ -153,7 +153,7 @@ namespace BookLibrary.Controllers
             }
         }
 
-        // DELETE
+        // Delete announcement 
         [HttpDelete("delete/{id}")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(Guid id)

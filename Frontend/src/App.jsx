@@ -3,7 +3,6 @@ import Login from './components/pages/auth/Login';
 import Home from './components/pages/home/Home';
 import Product from './components/pages/product/Product';
 import Register from './components/pages/auth/Register';
-
 import { Provider } from 'react-redux';
 import store from "./components/store/store";
 import { ToastContainer } from 'react-toastify';

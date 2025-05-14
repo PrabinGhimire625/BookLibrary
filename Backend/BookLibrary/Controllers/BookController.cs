@@ -33,11 +33,11 @@ namespace BookLibrary.Controllers
                 return Conflict(new { error = "Book with this title already exists." });
             }
 
-            // Ensure AddedDate and PublicationDate are in UTC
+            // AddedDate and PublicationDate are in UTC
             book.AddedDate = book.AddedDate.Kind == DateTimeKind.Utc ? book.AddedDate : book.AddedDate.ToUniversalTime();
             book.PublicationDate = book.PublicationDate.Kind == DateTimeKind.Utc ? book.PublicationDate : book.PublicationDate.ToUniversalTime();
 
-            // Ensure that Price is a positive value
+            // Price is a positive value
             if (book.Price <= 0)
             {
                 return BadRequest(new { error = "Price must be a positive value." });
@@ -54,7 +54,7 @@ namespace BookLibrary.Controllers
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await db.Books
-                .OrderByDescending(book => book.AddedDate) // 🔽 Sort by latest added date
+                .OrderByDescending(book => book.AddedDate) // Sort by latest added date
                 .ToListAsync();
 
             var bookResponses = books.Select(book => new
@@ -90,7 +90,6 @@ namespace BookLibrary.Controllers
             {
                 return NotFound(new { error = "Book not found." });
             }
-
             // Return full book details along with computed currentPrice
             var bookResponse = new
             {
@@ -127,28 +126,18 @@ namespace BookLibrary.Controllers
             {
                 return NotFound(new { error = "Book not found." });
             }
-
             existingBook.Title = updatedBook.Title;
             existingBook.ISBN = updatedBook.ISBN;
             existingBook.Author = updatedBook.Author;
-            // existingBook.AddedDate = updatedBook.AddedDate;
             existingBook.IsOnSale = updatedBook.IsOnSale;
             existingBook.Price = updatedBook.Price;
             existingBook.CoverImage = updatedBook.CoverImage;
             existingBook.Genre = updatedBook.Genre;
             existingBook.Category = updatedBook.Category;
-            // existingBook.PublicationDate = updatedBook.PublicationDate;
-
-
-            // Ensure AddedDate and PublicationDate are in UTC
             existingBook.AddedDate = existingBook.AddedDate.Kind == DateTimeKind.Utc ? existingBook.AddedDate : existingBook.AddedDate.ToUniversalTime();
             existingBook.PublicationDate = existingBook.PublicationDate.Kind == DateTimeKind.Utc ? existingBook.PublicationDate : existingBook.PublicationDate.ToUniversalTime();
-
-
             existingBook.Description = updatedBook.Description;
             existingBook.Stock = updatedBook.Stock;
-
-
             await db.SaveChangesAsync();
             return Ok(new { data = existingBook });
         }

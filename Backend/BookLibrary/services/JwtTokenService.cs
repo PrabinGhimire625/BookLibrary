@@ -27,29 +27,33 @@ public class JwtTokenService
 
         if (string.IsNullOrEmpty(user.Role))
         {
-            user.Role = UserRoles.User; 
+            user.Role = UserRoles.User;
         }
 
-        var key = _config["Jwt:Key"];  
-        var issuer = _config["Jwt:Issuer"];  
-        var audience = _config["Jwt:Audience"]; 
-        var tokenValidityMins = _config["Jwt:ExpiresInMinutes"];  
+        // Read JWT settings from configuration
+        var key = _config["Jwt:Key"];
+        var issuer = _config["Jwt:Issuer"];
+        var audience = _config["Jwt:Audience"];
+        var tokenValidityMins = _config["Jwt:ExpiresInMinutes"];
 
         if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience) || string.IsNullOrEmpty(tokenValidityMins))
         {
             throw new InvalidOperationException("JWT configuration values are missing or invalid.");
         }
 
-        var claims = new[] 
+        // Define claims to be included in the token
+        var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role) // Default role used if not provided
         };
 
+        // Create the signing key and credentials using HMAC SHA256
         var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256);
-
+        
+        // Build the JWT token
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,

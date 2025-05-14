@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BookLibrary.Middlewares
 {
+    // Middleware to handle global exceptions in a centralized way
     public class GlobalExceptionMiddleware
     {
         private readonly RequestDelegate _next;
@@ -17,6 +18,7 @@ namespace BookLibrary.Middlewares
             _next = next;
             _logger = logger;
         }
+        // Main method that intercepts HTTP requests and catches exceptions
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -32,7 +34,7 @@ namespace BookLibrary.Middlewares
                 LogErrorToFile(ex);
 
                 context.Response.ContentType = "application/json";
-
+                // Handle different types of exceptions with specific status codes and messages
                 switch (ex)
                 {
                     case ArgumentException:
@@ -58,9 +60,10 @@ namespace BookLibrary.Middlewares
             }
         }
 
+        // Method to log exceptions to a local text file
         private void LogErrorToFile(Exception ex)
         {
-            var logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "ErrorLogs.txt");
+            var logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "ErrorLogs.txt");  
 
             var logText = $"[{DateTime.Now:dd-MM-yyyy hh:mm tt}] Error: {ex.GetType().Name} - {ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}{Environment.NewLine}";
 

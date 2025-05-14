@@ -41,11 +41,8 @@ const announcementSlice = createSlice({
         setDeleteAnnouncement(state, action) {
             state.announcement = state.announcement.filter(item => item.bannerAnnouncementId !== action.payload.bannerAnnouncementId);  
         }
-        
     },
 });
-
-
 
 export const {
     setAnnouncementData,

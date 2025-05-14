@@ -65,7 +65,6 @@ export function register(data) {
   };
 }
 
-
 // login
 export function login(data) {
   return async function loginThunk(dispatch) {
@@ -95,8 +94,6 @@ export function login(data) {
     }
   };
 }
-
-
 
 //profile
 export function userProfile() {
@@ -146,7 +143,6 @@ export function updateUserProfile({ id, userData }) {
     }
   };
 }
-
 
 
 //profile

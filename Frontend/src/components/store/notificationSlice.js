@@ -25,7 +25,6 @@ const notificationsSlice = createSlice({
             state.unreadCount = 0;
             state.unreadNotification = [];
         }
-
     },
 });
 
@@ -66,8 +65,6 @@ export function markAllNotificationsAsRead() {
         }
     };
 }
-
-
 
 //fetch notification of single user
 export function fetchAllUnReadNotification() {

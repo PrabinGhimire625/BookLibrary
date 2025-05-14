@@ -10,15 +10,17 @@ using BookLibrary.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
-builder.Services.AddControllers();
+
+builder.Services.AddControllers(); // Add controller
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure PostgreSQL database
 builder.Services.AddDbContext<DatabaseConnection>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
 ); 
 
+// Dependency injection for services
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddHostedService<BannerCleanupService>();
 builder.Services.AddHostedService<DiscountCleanupService>();
@@ -30,6 +32,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Custom responses for failed auth
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -59,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Authorization policy
+// Role-based Authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdminRole", policy =>
@@ -78,7 +81,7 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-// CORS
+// CORS to connect with frontend
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -90,7 +93,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>(); // Global exception handler middleware
 
 
 if (app.Environment.IsDevelopment())

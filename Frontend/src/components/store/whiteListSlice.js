@@ -5,7 +5,7 @@ import { API, APIAuthenticated } from "../http";
 const whiteListSlice = createSlice({
     name: "whiteList",
     initialState: {
-        whiteList: [],      // To store the full list of books in the whitelist
+        whiteList: [],      
         status: STATUS.LOADING,
     },
 
@@ -14,7 +14,7 @@ const whiteListSlice = createSlice({
             state.whiteList = action.payload;  // Update whiteList with the fetched data
         },
         setStatus(state, action) {
-            state.status = action.payload;  // Update status (LOADING, SUCCESS, ERROR)
+            state.status = action.payload;  
         },
         setRemoveFromWhiteList(state, action) {
             // Remove the book from the list after successful deletion
@@ -35,11 +35,12 @@ export const {
 
 export default whiteListSlice.reducer;
 
+//add to whiselist
 export function addToWhiteList(bookId) {
     return async function addToWhiteListThunk(dispatch) {
         dispatch(setStatus(STATUS.LOADING));
         try {
-            const response = await APIAuthenticated.post("/api/whiteList", { bookId }); // BookId in request body
+            const response = await APIAuthenticated.post("/api/whiteList", { bookId }); 
             if (response.status === 200) {
                 dispatch(setStatus(STATUS.SUCCESS));
             } else {

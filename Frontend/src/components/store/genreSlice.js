@@ -39,8 +39,6 @@ const genreSlice = createSlice({
     },
 });
 
-
-
 export const {
     setGenreData,
     setSingleGenre,

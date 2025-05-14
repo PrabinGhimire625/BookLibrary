@@ -35,7 +35,6 @@ const cartSlice = createSlice({
     },
 });
 
-
 export const {
     setCartData,
     setSingleCart,
@@ -69,7 +68,6 @@ export function addToCart(bookId, quantity = 1) {
         }
     };
 }
-
 
 // List All cart item
 export function listAllCartItem() {
